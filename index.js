@@ -1,23 +1,37 @@
-const express = require("express")
-const line = require('@line/bot-sdk')
-const dotenv = require('dotenv')
-const app = express()
+const express = require("express");
+const line = require("@line/bot-sdk");
+const dotenv = require("dotenv");
+const app = express();
 dotenv.config();
-const port = process.env.PORT
+const port = process.env.PORT;
 
 const config = {
   channelAccessToken: process.env.LINE_ACCESS_TOKEN,
   channelSecret: process.env.SECRET_KEY,
+};
+
+const client = new line.Client(config);
+
+const handleEvent = async (event) => {
+  // メッセージじゃなかったら返信しない
+  if (event.type !== 'message' || event.message.type !== 'text') {
+    return null;
+  }
+
+  // ここで返信用メッセージを作成
+  await client.replyMessage(event.replyToken, {
+    type: 'text',
+    text: event.message.text
+  })
 }
 
-const client = new line.Client(config)
-
-app.post('/webhook', line.middleware(config), (req, res) => {
-  const events = req.body.events
-  console.log(events)
+app.post("/webhook", line.middleware(config), (req, res) => {
+  const events = req.body.events;
+  console.log(events);
   res.sendStatus(200);
-})
+  events.map(handleEvent);
+});
 
 app.listen(port, () => {
-  console.log("Node.js app listening at http://localhost:" + port)
-})
+  console.log("Node.js app listening at http://localhost:" + port);
+});
