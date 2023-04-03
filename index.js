@@ -18,6 +18,8 @@ const message = {
   text: '明日の名古屋市の天気は晴れのち曇りです。最高気温23度、最低気温は12度です。'
 };
 
+const userIDs = [process.env.USER_ID1];
+
 const handleEvent = async (event) => {
   // メッセージじゃなかったら返信しない
   if (event.type !== 'message' || event.message.type !== 'text') {
@@ -38,11 +40,11 @@ app.post("/webhook", line.middleware(config), (req, res) => {
   events.map(handleEvent);
 });
 
-const job = new cron.CronJob('* 9 * * *', () => {
-  // 9時になったら、メッセージを送信する
-  client.pushMessage(process.env.USER_ID, message)
+const job = new cron.CronJob('* 21 * * *', () => {
+  // 21時になったら、メッセージを送信する
+  client.multicast(userIDs, message)
     .then(() => {
-      console.log('9:00にメッセージを送信しました。');
+      console.log('21:00にメッセージを送信しました。');
     })
     .catch((err) => {
       console.error(err);
