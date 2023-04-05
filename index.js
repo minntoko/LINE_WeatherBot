@@ -81,7 +81,7 @@ app.post("/webhook", line.middleware(config), (req, res) => {
 });
 
 const job = new cron.CronJob(
-  "* 21 * * *",
+  "0 21 * * *",
   () => {
     // 21時になったら、メッセージを送信する
     client
