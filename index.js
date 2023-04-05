@@ -25,7 +25,7 @@ const handleEvent = async (event) => {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return null;
   }
-
+  
   // ここで返信用メッセージを作成
   await client.replyMessage(event.replyToken, {
     type: 'text',
@@ -36,7 +36,7 @@ const handleEvent = async (event) => {
 app.post("/webhook", line.middleware(config), (req, res) => {
   const events = req.body.events;
   console.log(events);
-  res.sendStatus(200);
+  res.sendStatus(200).end();
   events.map(handleEvent);
 });
 
@@ -53,6 +53,6 @@ const job = new cron.CronJob('* 21 * * *', () => {
 
 job.start();
 
-app.listen(port, () => {
+app.listen(port || 3000, () => {
   console.log("Node.js app listening at http://localhost:" + port);
 });
