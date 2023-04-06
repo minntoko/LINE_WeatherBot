@@ -8,6 +8,8 @@ const app = express();
 dotenv.config();
 const port = process.env.PORT;
 
+let message = {};
+
 const config = {
   channelAccessToken: process.env.LINE_ACCESS_TOKEN,
   channelSecret: process.env.SECRET_KEY,
@@ -20,8 +22,7 @@ const userIDs = [process.env.USER_ID1];
 const handleEvent = async (event) => {
 
   try {
-    const message = await getWeather();
-    console.log(message);
+    message = await getWeather();
   } catch {
     console.error('エラーが発生しました');
   }
@@ -42,7 +43,7 @@ const handleEvent = async (event) => {
   }
 
   // ここで返信用メッセージを作成
-  // await client.replyMessage(event.replyToken, message);
+  await client.replyMessage(event.replyToken, message);
 };
 
 app.post("/webhook", line.middleware(config), (req, res) => {
