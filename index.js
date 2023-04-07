@@ -19,7 +19,7 @@ const users = [
   },
   {
     userId: process.env.USER_ID1,
-    cronExpression: ["0 25 22 * * Fri"],
+    cronExpression: ["0 5 23 * * Fri"],
     region: "Tokyo",
   },
 ];
