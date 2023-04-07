@@ -2,12 +2,12 @@ const dotenv = require("dotenv");
 const request = require("request");
 dotenv.config();
 
-const city = "Nagoya";
-
-const options = {
-  url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ja&appid=${process.env.API_KEY}`,
-  method: "GET",
-  json: true,
+const options = (city = 'Nagoya') => {
+  return {
+    url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ja&appid=${process.env.API_KEY}`,
+    method: "GET",
+    json: true,
+  };
 };
 
 const convertWeather = (weather) => {
@@ -26,9 +26,9 @@ const convertWeather = (weather) => {
   return converted ? converted : weather;
 };
 
-const getWeather = async () => {
+const getWeather = async (city) => {
   const response = await new Promise((resolve, reject) => {
-    request(options, (error, res, body) => {
+    request(options(city), (error, res, body) => {
       error ? reject(error) : resolve(body);
     });
   });
