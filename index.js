@@ -29,12 +29,9 @@ users.forEach((user) => {
   cronExpressions.forEach((cronExpression) => {
     const job = new cron.CronJob(
       cronExpression,
-      () => {
+      async () => {
         // message = await getWeather();
-        const message = {
-          type: "text",
-          text: "定期メッセージ",
-        };
+        const message = await getWeather(user.region);
         client
           .pushMessage(user.userId, message)
           .then(() => {
