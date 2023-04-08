@@ -1,6 +1,4 @@
-const dotenv = require("dotenv");
 const request = require("request");
-dotenv.config();
 
 const options = (city = 'Nagoya') => {
   return {
