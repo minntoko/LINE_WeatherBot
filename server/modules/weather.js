@@ -11,8 +11,10 @@ const options = (city = 'Nagoya') => {
 const convertWeather = (weather) => {
   const weatherDict = {
     Clouds: "曇り",
-    Sunny: "晴れ",
+    Clear: "晴れ",
     Rain: "雨",
+    Snow: "雪",
+    Extreme: "異常気象"
   };
 
   const matchedKey = Object.keys(weatherDict).find((key) => {
