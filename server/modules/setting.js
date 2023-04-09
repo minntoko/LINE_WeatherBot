@@ -11,6 +11,14 @@ const users = [
   },
 ];
 
+const updateUser = (newUser) => {
+  const targetUser = users.find((user) => {
+    return user.userId == newUser.userId;
+  });
+  targetUser = { ...targetUser, ...newUser }
+};
+
 module.exports = {
   users: users,
-}
+  updateUser: updateUser,
+};
