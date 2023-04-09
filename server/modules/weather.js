@@ -14,7 +14,7 @@ const convertWeather = (weather) => {
     Clear: "晴れ",
     Rain: "雨",
     Snow: "雪",
-    Extreme: "異常気象"
+    Extreme: "荒れた天気"
   };
 
   const matchedKey = Object.keys(weatherDict).find((key) => {

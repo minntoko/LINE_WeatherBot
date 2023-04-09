@@ -9,6 +9,10 @@ const regionRegister =
 /(?=.*(?:地域|ちいき|都市|とし))(?=.*(?:設定|せってい|登録|とうろく))/;
 const settingAll =
 /(?=.*(?:現在|げんざい))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
+const Notification =
+/(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
+const usage =
+/(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
 
 const handleEvent = async (event) => {
 
@@ -37,6 +41,19 @@ const handleEvent = async (event) => {
     await client.replyMessage(event.replyToken, {
       type: "text",
       text: "現在登録せれている設定は\n\n地域：名古屋市\n通知時間：平日9時、土日10時です。",
+    });
+    return null;
+
+  } else if (event.message.text.match(Notification)) {
+    await client.replyMessage(event.replyToken, {
+      type: "text",
+      text: "天気をお知らせする時間を選択してね\n設定の例\n\n平日(月〜金)9:00\n休日(土〜日)10:00",
+    });
+    return null;
+  } else if (event.message.text.match(usage)) {
+    await client.replyMessage(event.replyToken, {
+      type: "text",
+      text: "指定した地域の天気を知りたい時間を設定すると、その時間にお天気状況をお知らせします。",
     });
     return null;
   }
