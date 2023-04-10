@@ -11,14 +11,48 @@ const users = [
   },
 ];
 
+const cityNames = {
+  "札幌": "Sapporo",
+  "仙台": "Sendai",
+  "東京": "Tokyo",
+  "名古屋": "Nagoya",
+  "大阪": "Osaka",
+  "福岡": "Fukuoka",
+  "那覇": "Naha",
+};
+
+const reversedCityNames = {};
+for (const key in cityNames) {
+  const value = cityNames[key];
+  reversedCityNames[value] = key;
+}
+
+const convertCityName = (cityName) => {
+  const matchedKey = Object.keys(cityNames).find((key) => {
+    const regex = new RegExp(key);
+    return regex.test(cityName);
+  });
+
+  const converted = cityNames[matchedKey];
+  return converted ? converted : 'Nagoya';
+}
+
+const reverseConvert = (cityName) => {
+  return reversedCityNames[cityName];
+}
+
 const updateUser = (newUser) => {
   const targetUser = users.find((user) => {
     return user.userId == newUser.userId;
   });
-  targetUser = { ...targetUser, ...newUser }
+  const updatedUser = { ...targetUser, ...newUser };
+  Object.assign(targetUser, updatedUser);
+  
+  return reverseConvert(updatedUser.region);
 };
 
 module.exports = {
   users: users,
   updateUser: updateUser,
+  convertCityName: convertCityName
 };
