@@ -1,5 +1,5 @@
 const { client } = require("./config.js");
-const { updateUser, convertCityName, users } = require("./setting.js");
+const { updateUser, convertCityName, reverseConvert, users } = require("./setting.js");
 const { getWeather } = require("./weather.js");
 
 const regex = /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -31,7 +31,7 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(settingAll)) {
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: `現在登録せれている設定は\n\n地域：${users[0].region}\n通知時間：平日9時、土日10時です。`,
+      text: `現在登録せれている設定は\n\n地域：${reverseConvert(users[0].region)}\n通知時間：平日9時、土日10時です。`,
     });
     return null;
   } else if (event.message.text.match(Notification)) {
@@ -49,15 +49,22 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(regionRegex)) {
     const match = event.message.text.match(regionRegex);
     const newCity = convertCityName(match[1]);
-    const newUserData = {
-      userId: event.source.userId,
-      region: newCity
+    if ( newCity ) {
+      const newUserData = {
+        userId: event.source.userId,
+        region: newCity
+      }
+      const newMessage = updateUser(newUserData);
+      await client.replyMessage(event.replyToken, {
+        type: "text",
+        text: `設定地域を${reverseConvert(newMessage)}に更新しました。`,
+      });
+    } else {
+      await client.replyMessage(event.replyToken, {
+        type: "text",
+        text: `対応していない地域です。県名や県庁所在地など別の地域をお試しください`,
+      });
     }
-    const newMessage = updateUser(newUserData);
-    await client.replyMessage(event.replyToken, {
-      type: "text",
-      text: `設定地域を${newMessage}に更新しました。`,
-    });
     return null;
   }
 

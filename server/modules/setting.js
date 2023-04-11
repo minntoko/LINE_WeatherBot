@@ -34,7 +34,7 @@ const convertCityName = (cityName) => {
   });
 
   const converted = cityNames[matchedKey];
-  return converted ? converted : 'Nagoya';
+  return converted ? converted : null;
 }
 
 const reverseConvert = (cityName) => {
@@ -48,11 +48,12 @@ const updateUser = (newUser) => {
   const updatedUser = { ...targetUser, ...newUser };
   Object.assign(targetUser, updatedUser);
   
-  return reverseConvert(updatedUser.region);
+  return updatedUser.region;
 };
 
 module.exports = {
   users: users,
   updateUser: updateUser,
-  convertCityName: convertCityName
+  convertCityName: convertCityName,
+  reverseConvert: reverseConvert
 };
