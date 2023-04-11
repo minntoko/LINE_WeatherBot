@@ -3,7 +3,7 @@ const { updateUser, convertCityName, reverseConvert, users } = require("./settin
 const { getWeather } = require("./weather.js");
 
 const regex = /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
-const regionRegister = /(?=.*(?:地域|ちいき|都市|とし))(?=.*(?:設定|せってい|登録|とうろく))/;
+const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
 const regionRegex = /地域を(.+)(?:に変更して|に設定して)/;
 const settingAll = /(?=.*(?:現在|げんざい))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
 const Notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
@@ -22,7 +22,7 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(regionRegister)) {
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：東京都、愛知県、沖縄県など",
+      text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋に設定してなど。",
     });
     return null;
   } else if (event.message.text.match(regex)) {
@@ -37,7 +37,7 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(Notification)) {
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: "天気をお知らせする時間を選択してね\n設定の例\n\n平日(月〜金)9:00\n休日(土〜日)10:00",
+      text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日(月〜金)9:00\n休日(土〜日)10:00など。",
     });
     return null;
   } else if (event.message.text.match(usage)) {
@@ -54,15 +54,15 @@ const handleEvent = async (event) => {
         userId: event.source.userId,
         region: newCity
       }
-      const newMessage = updateUser(newUserData);
+      const updatedUser = updateUser(newUserData);
       await client.replyMessage(event.replyToken, {
         type: "text",
-        text: `設定地域を${reverseConvert(newMessage)}に更新しました。`,
+        text: `登録する地域を${reverseConvert(updatedUser.region)}にしました。`,
       });
     } else {
       await client.replyMessage(event.replyToken, {
         type: "text",
-        text: `対応していない地域です。県名や県庁所在地など別の地域をお試しください`,
+        text: `対応していない地域です。県名や県庁所在地など別の地域をお試しください。`,
       });
     }
     return null;
