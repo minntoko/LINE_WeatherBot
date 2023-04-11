@@ -11,6 +11,7 @@ const users = [
   },
 ];
 
+// 地域変換テーブル
 const cityNames = {
   "札幌": "Sapporo",
   "仙台": "Sendai",
@@ -21,12 +22,14 @@ const cityNames = {
   "那覇": "Naha",
 };
 
+// 逆引き用
 const reversedCityNames = {};
 for (const key in cityNames) {
   const value = cityNames[key];
   reversedCityNames[value] = key;
 }
 
+// 地域を英語に変換
 const convertCityName = (cityName) => {
   const matchedKey = Object.keys(cityNames).find((key) => {
     const regex = new RegExp(key);
@@ -37,10 +40,12 @@ const convertCityName = (cityName) => {
   return converted ? converted : null;
 }
 
+// 地域を日本語に変換
 const reverseConvert = (cityName) => {
   return reversedCityNames[cityName];
 }
 
+// ユーザ情報を更新
 const updateUser = (newUser) => {
   const targetUser = users.find((user) => {
     return user.userId == newUser.userId;
@@ -48,7 +53,7 @@ const updateUser = (newUser) => {
   const updatedUser = { ...targetUser, ...newUser };
   Object.assign(targetUser, updatedUser);
   
-  return updatedUser.region;
+  return updatedUser;
 };
 
 module.exports = {
