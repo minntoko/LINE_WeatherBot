@@ -4,7 +4,7 @@ const { getWeather } = require("./weather.js");
 
 const regex = /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
 const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
-const regionRegex = /地域を(.+)(?:に変更して|に設定して)/;
+const regionRegex = /地域を(.+)(?:に変更して|にして|に設定して)/;
 const settingAll = /(?=.*(?:現在|げんざい))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
 const Notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
 const usage = /(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
@@ -22,7 +22,7 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(regionRegister)) {
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋に設定してなど。",
+      text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
     });
     return null;
   } else if (event.message.text.match(regex)) {

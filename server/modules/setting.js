@@ -3,11 +3,13 @@ const users = [
     userId: process.env.USER_ID1,
     cronExpression: ["0 0 9,21 * * Mon-Fri", "0 0 10,23 * * Sat-Sun"],
     region: "Nagoya",
+    enabled: true
   },
   {
     userId: process.env.USER_ID1,
     cronExpression: ["0 59 23 * * Wed"],
     region: "Tokyo",
+    enabled: true
   },
 ];
 
@@ -55,6 +57,10 @@ const updateUser = (newUser) => {
   
   return updatedUser;
 };
+
+// ユーザを追加する処理
+
+// 通知時間を更新
 
 module.exports = {
   users: users,
