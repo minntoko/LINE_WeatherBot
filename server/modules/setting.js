@@ -59,6 +59,15 @@ const updateUser = (newUser) => {
 };
 
 // ユーザを追加する処理
+const addUser = (userId) => {
+  const newUser = {
+    userId: userId,
+    cronExpression: [],
+    region: "",
+    enabled: true
+  }
+  users.push(newUser)
+}
 
 // 通知時間を更新
 
