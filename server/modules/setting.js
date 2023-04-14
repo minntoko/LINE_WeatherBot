@@ -60,16 +60,22 @@ const updateUser = (newUser) => {
 
 // ユーザを追加する処理
 const addUser = (userId) => {
-  const newUser = {
-    userId: userId,
-    cronExpression: [],
-    region: "",
-    enabled: true
-  }
-  users.push(newUser)
-}
+  // 新しいユーザーがすでに存在するかどうかを確認する
+  const isExistingUser = users.some(user => user.userId === userId);
 
-// 通知時間を更新
+  if (!isExistingUser) {
+    const newUser = {
+      userId: userId,
+      cronExpression: [],
+      region: null,
+      enabled: true
+    }
+    users.push(newUser)
+    console.log(`User ${userId} has been added.`);
+  } else {
+    console.log(`User ${userId} already exists.`);
+  }
+};
 
 module.exports = {
   users: users,
