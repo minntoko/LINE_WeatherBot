@@ -104,6 +104,15 @@ function createCronExpression(expression) {
   throw new Error("Invalid expression");
 }
 
+const updateCron = ({ message, userId }) => {
+  const newCronExpression = createCronExpression(message);
+  users.forEach((user) => {
+    if (user.userId === userId) {
+      user.cronExpression.push(newCronExpression);
+    }
+  });
+};
+
 module.exports = {
   users: users,
   updateUser: updateUser,
