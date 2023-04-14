@@ -1,13 +1,14 @@
 const { client } = require("./config.js");
-const { updateUser, convertCityName, reverseConvert, users } = require("./setting.js");
+const { updateUser, convertCityName, reverseConvert, updateCron, users } = require("./setting.js");
 const { getWeather } = require("./weather.js");
 
 const regex = /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
 const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
 const regionRegex = /地域を(.+)(?:に変更して|にして|に設定して)/;
 const settingAll = /(?=.*(?:現在|げんざい))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
-const Notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
+const notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
 const usage = /(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
+const notificationRegex = /(?=.*の)(?=.*(?:に通知して|につうちして|に通知))/;
 
 const handleEvent = async (event) => {
   try {
@@ -34,10 +35,24 @@ const handleEvent = async (event) => {
       text: `現在登録せれている設定は\n\n地域：${reverseConvert(users[0].region)}\n通知時間：平日9時、土日10時です。`,
     });
     return null;
-  } else if (event.message.text.match(Notification)) {
+  } else if (event.message.text.match(notificationRegex)) {
+
+    updateCron({message: event.message.text, userId: event.source.userId});
+
+    let message = "現在登録せれている通知は\n\n通知時間：";
+    users[0].cronExpression.forEach(expression => {
+      message += `\n${expression}`;
+    });
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日(月〜金)9:00\n休日(土〜日)10:00など。",
+      text: message,
+    });
+    return null;
+
+  } else if (event.message.text.match(notification)) {
+    await client.replyMessage(event.replyToken, {
+      type: "text",
+      text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日の9時に通知して\n土日の10時に通知してなど。",
     });
     return null;
   } else if (event.message.text.match(usage)) {

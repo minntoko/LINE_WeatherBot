@@ -81,6 +81,7 @@ const addUser = (userId) => {
 // 例：「土日の10時に通知して」→「0 0 10 * * Sat-Sun」
 // 例：「土日の10時と23時に通知して」→「0 0 10,23 * * Sat-Sun」
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
+// 課題　→　ありえない時間を指定した場合の処理
 function createCronExpression(expression) {
   const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -89,11 +90,13 @@ function createCronExpression(expression) {
     .replace(/毎週/g, "")
     .replace(/分/g, "")
     .replace(/と/g, ",")
-    .replace(/時に通知して/g, "")
+    .replace(/に通知して/g, "")
     .split("の");
 
-  let minute = parts[1].split(/(?:時|:|：)/)[1];
+  let minute = parts[1].split(/(?:時|:|：)/)[1] || 0;
   let hour = parts[1].split(/(?:時|:|：)/)[0];
+
+  console.log(parts);
 
   if (parts[0] === "平日") {
     return `0 ${minute} ${hour} * * 1-5`;
