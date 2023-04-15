@@ -1,5 +1,5 @@
 const { client } = require("./config.js");
-const { updateUser, convertCityName, reverseConvert, updateCron, users } = require("./setting.js");
+const { updateUser, convertCityName, reverseConvert, updateCron, convertCronToMessage, users } = require("./setting.js");
 const { getWeather } = require("./weather.js");
 
 const regex = /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -41,7 +41,7 @@ const handleEvent = async (event) => {
 
     let message = "現在登録せれている通知は\n\n通知時間：";
     users[0].cronExpression.forEach(expression => {
-      message += `\n${expression}`;
+      message += (`\n${convertCronToMessage(expression)}`);
     });
     await client.replyMessage(event.replyToken, {
       type: "text",
@@ -52,7 +52,7 @@ const handleEvent = async (event) => {
   } else if (event.message.text.match(notification)) {
     await client.replyMessage(event.replyToken, {
       type: "text",
-      text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日の9時に通知して\n土日の10時に通知してなど。",
+      text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日の9時に通知して\n土日の22時に通知してなど。",
     });
     return null;
   } else if (event.message.text.match(usage)) {
