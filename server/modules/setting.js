@@ -31,6 +31,8 @@ for (const key in cityNames) {
   reversedCityNames[value] = key;
 }
 
+const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+
 // 地域を英語に変換
 const convertCityName = (cityName) => {
   const matchedKey = Object.keys(cityNames).find((key) => {
@@ -83,8 +85,6 @@ const addUser = (userId) => {
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
 // 課題　→　ありえない時間を指定した場合の処理
 function createCronExpression(expression) {
-  const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
-
   const parts = expression
     .replace(/曜日/g, "")
     .replace(/毎週/g, "")
@@ -133,7 +133,39 @@ const updateCron = ({ message, userId }) => {
 // 例： 「0 10,23 * * 0,6」 -> 「土日の10時と23時」
 // 例： 「59 23 * * 3」 -> 「水曜日の23時59分」
 const convertCronToMessage = (cronExpression) => {
-}
+  try {
+    const parts = cronExpression.split(" ");
+    console.log(parts);
+    const minute = parts[1];
+    const hour = parts[2];
+    // const dayOfMonth = parts[3];
+    // const month = parts[4];
+    const dayOfWeek = parts[5];
+
+    let message = "毎週";
+    if (dayOfWeek === "1-5") {
+      message += "平日";
+    } else if (dayOfWeek === "0,6") {
+      message += "土日";
+    } else {
+      message += dayOfWeek
+        .split(",")
+        .map((value) => weekdays[value])
+        .join("と");
+    }
+    console.log(message);
+    // 時間によってメッセージを構築する
+    message += `の${hour}時`;
+    if (minute !== "0") {
+      message += `${minute}分`;
+    }
+
+    return message;
+  } catch (err) {
+    console.error("Error parsing cron expression", err);
+    return null;
+  }
+};
 
 module.exports = {
   users: users,
