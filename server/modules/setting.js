@@ -1,13 +1,13 @@
 const users = [
   {
     userId: process.env.USER_ID1,
-    cronExpression: ["0 0 9,21 * * Mon-Fri", "0 0 10,23 * * Sat-Sun"],
+    cronExpression: [],
     region: "Nagoya",
     enabled: true,
   },
   {
     userId: process.env.USER_ID1,
-    cronExpression: ["0 59 23 * * Wed"],
+    cronExpression: [],
     region: "Tokyo",
     enabled: true,
   },
@@ -90,11 +90,15 @@ function createCronExpression(expression) {
     .replace(/毎週/g, "")
     .replace(/分/g, "")
     .replace(/と/g, ",")
-    .replace(/に通知して/g, "")
+    .replace(/に通知して.*/g, "")
     .split("の");
 
   let minute = parts[1].split(/(?:時|:|：)/)[1] || 0;
   let hour = parts[1].split(/(?:時|:|：)/)[0];
+
+  if (isNaN(hour) || isNaN(minute)) {
+    throw new Error("Invalid time format");
+  }
 
   console.log(parts);
 
@@ -123,10 +127,19 @@ const updateCron = ({ message, userId }) => {
   });
 };
 
+// クーロン式からメッセージに変換する処理
+// 例： 「0 9 * * 1-5」 -> 「平日の9時」
+// 例： 「0 10 * * 0,6」 -> 「土日の10時」
+// 例： 「0 10,23 * * 0,6」 -> 「土日の10時と23時」
+// 例： 「59 23 * * 3」 -> 「水曜日の23時59分」
+const convertCronToMessage = (cronExpression) => {
+}
+
 module.exports = {
   users: users,
   updateUser: updateUser,
   convertCityName: convertCityName,
   reverseConvert: reverseConvert,
   updateCron: updateCron,
+  convertCronToMessage: convertCronToMessage,
 };
