@@ -1,6 +1,6 @@
 const request = require("request");
 
-const options = (city = 'Nagoya') => {
+const options = (city) => {
   return {
     url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ja&appid=${process.env.API_KEY}`,
     method: "GET",

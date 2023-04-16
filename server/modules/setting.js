@@ -2,7 +2,7 @@ const users = [
   {
     userId: process.env.USER_ID1,
     cronExpression: [],
-    region: "Nagoya",
+    region: "",
     enabled: true,
   },
   {
@@ -81,7 +81,6 @@ const addUser = (userId) => {
 // 例：「平日の9時に通知して」→「0 0 9 * * Mon-Fri」
 // 例：「月から金の9時に通知して」→「0 0 9 * * Mon-Fri」
 // 例：「土日の10時に通知して」→「0 0 10 * * Sat-Sun」
-// 例：「土日の10時と23時に通知して」→「0 0 10,23 * * Sat-Sun」
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
 // 課題　→　ありえない時間を指定した場合の処理
 function createCronExpression(expression) {
@@ -95,10 +94,6 @@ function createCronExpression(expression) {
 
   let minute = parts[1].split(/(?:時|:|：)/)[1] || 0;
   let hour = parts[1].split(/(?:時|:|：)/)[0];
-
-  if (isNaN(hour) || isNaN(minute)) {
-    throw new Error("Invalid time format");
-  }
 
   console.log(parts);
 
@@ -114,7 +109,6 @@ function createCronExpression(expression) {
     const dayOfWeek = weekdays.indexOf(parts[0]);
     return `0 ${minute} ${hour} * * ${dayOfWeek}`;
   }
-
   throw new Error("Invalid expression");
 }
 
@@ -153,13 +147,9 @@ const convertCronToMessage = (cronExpression) => {
         .map((value) => weekdays[value] + "曜日")
         .join("と");
     }
-    console.log(message);
     // 時間によってメッセージを構築する
     message += `の${hour}時`;
-    if (minute !== "0") {
-      message += `${minute}分`;
-    }
-
+    message += minute !== 0 ? "" : minute + "分";
     return message;
   } catch (err) {
     console.error("Error parsing cron expression", err);
