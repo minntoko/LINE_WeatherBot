@@ -22,87 +22,86 @@ const notificationRegex = /(?=.*の)(?=.*(?:に通知して|につうちして|�
 
 const handleEvent = async (event) => {
   try {
+    const text = event.message.text;
     // メッセージじゃなかったら返信しない
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
-    } else if (event.message.text.match(regionRegister)) {
-      await client.replyMessage(event.replyToken, {
-        type: "text",
-        text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
-      });
-      return null;
-    } else if (event.message.text.match(regex)) {
-      message = await getWeather(users[0].region || "Nagoya");
-      await client.replyMessage(event.replyToken, message);
-      return null;
-    } else if (event.message.text.match(settingAll)) {
-      await client.replyMessage(event.replyToken, {
-        type: "text",
-        text: `現在登録せれている設定は\n\n地域：${reverseConvert(
-          users[0].region
-        ) || "なし"}\n通知時間：${users[0].cronExpression
-          .map((expression) => {
-            return '\n' + convertCronToMessage(expression);
-          })
-          .join("、") || "なし"}`,
-      });
-      return null;
-    } else if (event.message.text.match(notificationRegex)) {
-      updateCron({ message: event.message.text, userId: event.source.userId });
-
-      let message = "現在登録せれている通知は\n\n通知時間：\n";
-      message += users[0].cronExpression
-        .map((expression) => {
-          return convertCronToMessage(expression);
-        })
-        .join("、\n");
-      message += "です。";
-      await client.replyMessage(event.replyToken, {
-        type: "text",
-        text: message,
-      });
-      return null;
-    } else if (event.message.text.match(notification)) {
-      await client.replyMessage(event.replyToken, {
-        type: "text",
-        text: "天気をお知らせする時間を選択してね。\n\n設定の例:\n平日の9時に通知して\n土日の22時に通知してなど。",
-      });
-      return null;
-    } else if (event.message.text.match(usage)) {
-      await client.replyMessage(event.replyToken, {
-        type: "text",
-        text: "天気予報くんの使い方は\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
-      });
-      return null;
-    } else if (event.message.text.match(regionRegex)) {
-      const match = event.message.text.match(regionRegex);
-      const newCity = convertCityName(match[1]);
-      if (newCity) {
-        const newUserData = {
-          userId: event.source.userId,
-          region: newCity,
-        };
-        const updatedUser = updateUser(newUserData);
-        await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: `登録する地域を${reverseConvert(
-            updatedUser.region
-          )}にしました。`,
-        });
-      } else {
-        await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: `対応していない地域です。県名や県庁所在地など別の地域をお試しください。`,
-        });
-      }
-      return null;
     }
 
-    // ここで返信用メッセージを作成
-    await client.replyMessage(event.replyToken, {
-      type: "text",
-      text: `おうむ返しだぁぁ ${event.message.text}`,
-    });
+    switch (true) {
+      case regionRegister.test(text):
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
+        });
+        break;
+      case regex.test(text):
+        message = await getWeather(users[0].region || "Nagoya");
+        await client.replyMessage(event.replyToken, message);
+        break;
+      case settingAll.test(text):
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: `現在登録せれている設定は\n\n地域：${
+            reverseConvert(users[0].region) || "なし"
+          }\n通知時間：${
+            users[0].cronExpression
+              .map((expression) => {
+                return convertCronToMessage(expression);
+              })
+              .join("、") || "なし"
+          }\nです。`,
+        });
+        break;
+      case notification.test(text):
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n朝の7時に通知して、\n夜の9時に通知してなど。",
+        });
+        break;
+      case usage.test(text):
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
+          });
+        break;
+      case regionRegex.test(text):
+        const region = convertCityName(text.match(regionRegex)[1]);
+        if (region) {
+          await updateUser(event.source.userId, { region: region });
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: `地域を${reverseConvert(region)}に設定しました。`,
+          });
+        } else {
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: "地域名が正しくありません。もう一度入力してください。",
+          });
+        }
+        break;
+      case notificationRegex.test(text):
+        const cronExpression = text.match(notificationRegex)[1];
+        if (cronExpression) {
+          await updateCron(event.source.userId, cronExpression);
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: `${cronExpression}に通知を設定しました。`,
+          });
+        } else {
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: "時間が正しくありません。もう一度入力してください。",
+          });
+        }
+        break;
+      default:
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: `おうむ返しだぁぁ ${text}`,
+        });
+        break;
+      }
     return null;
   } catch {
     console.error("エラーが発生しました");
