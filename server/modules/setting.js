@@ -138,8 +138,8 @@ const convertCronToMessage = (cronExpression) => {
     console.log(parts);
     const minute = parts[1];
     const hour = parts[2];
-    // const dayOfMonth = parts[3];
-    // const month = parts[4];
+    const dayOfMonth = parts[3];
+    const month = parts[4];
     const dayOfWeek = parts[5];
 
     let message = "毎週";
@@ -150,7 +150,7 @@ const convertCronToMessage = (cronExpression) => {
     } else {
       message += dayOfWeek
         .split(",")
-        .map((value) => weekdays[value])
+        .map((value) => weekdays[value] + "曜日")
         .join("と");
     }
     console.log(message);

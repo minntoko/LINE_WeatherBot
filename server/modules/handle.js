@@ -39,10 +39,11 @@ const handleEvent = async (event) => {
 
     updateCron({message: event.message.text, userId: event.source.userId});
 
-    let message = "現在登録せれている通知は\n\n通知時間：";
-    users[0].cronExpression.forEach(expression => {
-      message += (`\n${convertCronToMessage(expression)}`);
-    });
+    let message = "現在登録せれている通知は\n\n通知時間：\n";
+    message += users[0].cronExpression.map((expression) => {
+      return convertCronToMessage(expression);
+    }).join("、\n");
+    message += "です。";
     await client.replyMessage(event.replyToken, {
       type: "text",
       text: message,
