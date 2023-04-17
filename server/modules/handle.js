@@ -43,7 +43,7 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: `現在登録せれている設定は\n\n地域：${
-            reverseConvert(users[0].region) || "なし"
+            reverseConvert(users[0].region) || "なし" // 修正が必要
           }\n通知時間：${
             users[0].cronExpression
               .map((expression) => {
@@ -56,19 +56,19 @@ const handleEvent = async (event) => {
       case notification.test(text):
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n朝の7時に通知して、\n夜の9時に通知してなど。",
+          text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n平日の9時に通知して\n土日の22時に通知してなど。",
         });
         break;
       case usage.test(text):
-          await client.replyMessage(event.replyToken, {
-            type: "text",
-            text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
-          });
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
+        });
         break;
       case regionRegex.test(text):
         const region = convertCityName(text.match(regionRegex)[1]);
         if (region) {
-          await updateUser(event.source.userId, { region: region });
+          await updateUser({ userId: event.source.userId, region: region });
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: `地域を${reverseConvert(region)}に設定しました。`,
@@ -81,12 +81,19 @@ const handleEvent = async (event) => {
         }
         break;
       case notificationRegex.test(text):
-        const cronExpression = text.match(notificationRegex)[1];
-        if (cronExpression) {
-          await updateCron(event.source.userId, cronExpression);
+        // createCronExpressionをここで行う
+        if (true) {
+          updateCron({ message: text, userId: event.source.userId });
+          let message = "現在登録せれている通知は\n\n通知時間：\n";
+          message += users[0].cronExpression // 修正が必要
+            .map((expression) => {
+              return convertCronToMessage(expression);
+            })
+            .join("、\n");
+          message += "です。";
           await client.replyMessage(event.replyToken, {
             type: "text",
-            text: `${cronExpression}に通知を設定しました。`,
+            text: message,
           });
         } else {
           await client.replyMessage(event.replyToken, {
@@ -101,7 +108,7 @@ const handleEvent = async (event) => {
           text: `おうむ返しだぁぁ ${text}`,
         });
         break;
-      }
+    }
     return null;
   } catch {
     console.error("エラーが発生しました");
