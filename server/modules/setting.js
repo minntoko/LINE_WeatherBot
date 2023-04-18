@@ -83,8 +83,8 @@ const addUser = (userId) => {
 // 例：「土日の10時に通知して」→「0 0 10 * * Sat-Sun」
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
 // 課題　→　ありえない時間を指定した場合の処理
-function createCronExpression(expression) {
-  const parts = expression
+function createCronExpression(message) {
+  const parts = message
     .replace(/曜日/g, "")
     .replace(/毎週/g, "")
     .replace(/分/g, "")
