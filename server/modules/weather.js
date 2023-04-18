@@ -9,6 +9,7 @@ const options = (city) => {
 };
 
 const convertWeather = (weather) => {
+  // TODO 調べる
   const weatherDict = {
     Clouds: "曇り",
     Clear: "晴れ",
@@ -16,13 +17,7 @@ const convertWeather = (weather) => {
     Snow: "雪",
     Extreme: "荒れた天気",
   };
-
-  const matchedKey = Object.keys(weatherDict).find((key) => {
-    const regex = new RegExp(key, "i");
-    return regex.test(weather);
-  });
-
-  const converted = weatherDict[matchedKey];
+  const converted = weatherDict[weather];
   return converted ? converted : weather;
 };
 

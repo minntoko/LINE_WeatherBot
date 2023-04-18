@@ -29,7 +29,7 @@ const handleEvent = async (event) => {
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
     }
-
+    let message = "";
     switch (true) {
       case regionRegister.test(text):
         await client.replyMessage(event.replyToken, {
@@ -38,14 +38,14 @@ const handleEvent = async (event) => {
         });
         break;
       case regex.test(text):
-       const message = await getWeather(targetUser.region || "Nagoya");
+       message = await getWeather(targetUser.region || "Nagoya");
         await client.replyMessage(event.replyToken, message);
         break;
       case settingAll.test(text):
         message = `現在登録せれている設定は\n\n地域：${
           reverseConvert(targetUser.region) || "なし"
         }\n通知時間：${
-          users[0].cronExpression
+          targetUser.cronExpression
             .map((expression) => {
               return convertCronToMessage(expression);
             })
