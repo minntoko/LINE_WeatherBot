@@ -14,7 +14,7 @@ const convertWeather = (weather) => {
     Clear: "晴れ",
     Rain: "雨",
     Snow: "雪",
-    Extreme: "荒れた天気"
+    Extreme: "荒れた天気",
   };
 
   const matchedKey = Object.keys(weatherDict).find((key) => {
@@ -27,11 +27,15 @@ const convertWeather = (weather) => {
 };
 
 const getWeather = async (city) => {
+
   const response = await new Promise((resolve, reject) => {
     request(options(city), (error, res, body) => {
       error ? reject(error) : resolve(body);
     });
   });
+
+  console.log(response);
+
 
   const temp_max = response.main.temp_max.toFixed(1);
   const temp_min = response.main.temp_min.toFixed(1);

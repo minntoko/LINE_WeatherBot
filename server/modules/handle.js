@@ -23,6 +23,8 @@ const notificationRegex = /(?=.*の)(?=.*(?:に通知して|につうちして|�
 const handleEvent = async (event) => {
   try {
     const text = event.message.text;
+    const userId = event.source.userId;
+    const  targetUser = users.find(user => user.userId === userId);
     // メッセージじゃなかったら返信しない
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
@@ -36,21 +38,22 @@ const handleEvent = async (event) => {
         });
         break;
       case regex.test(text):
-        message = await getWeather(users[0].region || "Nagoya");
+       const message = await getWeather(targetUser.region || "Nagoya");
         await client.replyMessage(event.replyToken, message);
         break;
       case settingAll.test(text):
+        message = `現在登録せれている設定は\n\n地域：${
+          reverseConvert(targetUser.region) || "なし"
+        }\n通知時間：${
+          users[0].cronExpression
+            .map((expression) => {
+              return convertCronToMessage(expression);
+            })
+            .join("、") || "なし"
+        }\nです。`
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: `現在登録せれている設定は\n\n地域：${
-            reverseConvert(users[0].region) || "なし" // 修正が必要
-          }\n通知時間：${
-            users[0].cronExpression
-              .map((expression) => {
-                return convertCronToMessage(expression);
-              })
-              .join("、") || "なし"
-          }\nです。`,
+          text: message
         });
         break;
       case notification.test(text):
@@ -68,7 +71,7 @@ const handleEvent = async (event) => {
       case regionRegex.test(text):
         const region = convertCityName(text.match(regionRegex)[1]);
         if (region) {
-          await updateUser({ userId: event.source.userId, region: region });
+          await updateUser({ userId: userId, region: region });
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: `地域を${reverseConvert(region)}に設定しました。`,
@@ -83,9 +86,9 @@ const handleEvent = async (event) => {
       case notificationRegex.test(text):
         // createCronExpressionをここで行う
         if (true) {
-          updateCron({ message: text, userId: event.source.userId });
+          updateCron({ message: text, userId: userId });
           let message = "現在登録せれている通知は\n\n通知時間：\n";
-          message += users[0].cronExpression // 修正が必要
+          message += targetUser.cronExpression
             .map((expression) => {
               return convertCronToMessage(expression);
             })

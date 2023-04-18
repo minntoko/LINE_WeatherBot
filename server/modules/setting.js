@@ -1,6 +1,6 @@
 const users = [
   {
-    userId: process.env.USER_ID1,
+    userId: "Ued7682d4b7fffa3b91cbf24ed734cde9",
     cronExpression: [],
     region: "",
     enabled: true,
@@ -71,9 +71,9 @@ const addUser = (userId) => {
       enabled: true,
     };
     users.push(newUser);
-    console.log(`User ${userId} has been added.`);
+    console.log(`ユーザ登録に成功しました。`);
   } else {
-    console.log(`User ${userId} already exists.`);
+    console.log(`すでに登録済みのユーザです。`);
   }
 };
 
