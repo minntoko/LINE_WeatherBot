@@ -120,6 +120,12 @@ const updateCron = ({ expression, userId }) => {
   });
 };
 
+// すでに登録されているクーロン式かどうかを判定する処理
+const isExistingCron = ({ expression, userId }) => {
+  const user = users.find((user) => user.userId === userId);
+  return user.cronExpression.includes(expression); // true or false
+};
+
 // クーロン式を削除する処理
 const deleteCron = ({ expression, userId }) => {
   users.forEach((user) => {
