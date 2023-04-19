@@ -113,10 +113,21 @@ function createCronExpression(message) {
 }
 
 const updateCron = ({ expression, userId }) => {
-  // const newCronExpression = createCronExpression(message);
   users.forEach((user) => {
     if (user.userId === userId) {
       user.cronExpression.push(expression);
+    }
+  });
+};
+
+// クーロン式を削除する処理
+const deleteCron = ({ expression, userId }) => {
+  users.forEach((user) => {
+    if (user.userId === userId) {
+      // 一致しないものだけを残す
+      user.cronExpression = user.cronExpression.filter(
+        (cron) => cron !== expression
+      );
     }
   });
 };
