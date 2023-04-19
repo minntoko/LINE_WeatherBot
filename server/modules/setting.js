@@ -112,11 +112,11 @@ function createCronExpression(message) {
   throw new Error("Invalid expression");
 }
 
-const updateCron = ({ message, userId }) => {
-  const newCronExpression = createCronExpression(message);
+const updateCron = ({ expression, userId }) => {
+  // const newCronExpression = createCronExpression(message);
   users.forEach((user) => {
     if (user.userId === userId) {
-      user.cronExpression.push(newCronExpression);
+      user.cronExpression.push(expression);
     }
   });
 };
@@ -149,7 +149,7 @@ const convertCronToMessage = (cronExpression) => {
     }
     // 時間によってメッセージを構築する
     message += `の${hour}時`;
-    message += minute !== 0 ? "" : minute + "分";
+    message += minute === '0' ? "" : minute + "分";
     return message;
   } catch (err) {
     console.error("Error parsing cron expression", err);
@@ -164,4 +164,5 @@ module.exports = {
   reverseConvert: reverseConvert,
   updateCron: updateCron,
   convertCronToMessage: convertCronToMessage,
+  createCronExpression: createCronExpression,
 };
