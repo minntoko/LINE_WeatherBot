@@ -5,9 +5,11 @@ const {
   reverseConvert,
   updateCron,
   convertCronToMessage,
+  createCronExpression,
   users,
 } = require("./setting.js");
 const { getWeather } = require("./weather.js");
+const  parser = require('cron-parser');
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -47,10 +49,10 @@ const handleEvent = async (event) => {
         }\n通知時間：${
           targetUser.cronExpression
             .map((expression) => {
-              return convertCronToMessage(expression);
+              return "\n" + convertCronToMessage(expression);
             })
             .join("、") || "なし"
-        }\nです。`
+        }です。`
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: message
@@ -85,8 +87,17 @@ const handleEvent = async (event) => {
         break;
       case notificationRegex.test(text):
         // createCronExpressionをここで行う
-        if (true) {
-          updateCron({ message: text, userId: userId });
+        const expression = createCronExpression(text);
+        // expressionが正しい可動かを判定する
+        let expressionJudge = false;
+        try {
+          parser.parseExpression(expression);
+          expressionJudge = true;
+        } catch {
+          console.log("expressionが正しくありません");
+        }
+        if (expressionJudge) {
+          updateCron({ expression: expression, userId: userId });
           let message = "現在登録せれている通知は\n\n通知時間：\n";
           message += targetUser.cronExpression
             .map((expression) => {
