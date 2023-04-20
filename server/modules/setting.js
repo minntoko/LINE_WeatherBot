@@ -2,13 +2,13 @@ const users = [
   {
     userId: "Ued7682d4b7fffa3b91cbf24ed734cde9",
     cronExpression: [],
-    region: "",
+    region: "Tokyo",
     enabled: true,
   },
   {
     userId: process.env.USER_ID1,
     cronExpression: [],
-    region: "Tokyo",
+    region: "",
     enabled: true,
   },
 ];
@@ -90,6 +90,7 @@ function createCronExpression(message) {
     .replace(/分/g, "")
     .replace(/と/g, ",")
     .replace(/に通知して.*/g, "")
+    .replace(/の通知を.*/g, "")
     .split("の");
 
   let minute = parts[1].split(/(?:時|:|：)/)[1] || 0;
@@ -182,4 +183,6 @@ module.exports = {
   updateCron: updateCron,
   convertCronToMessage: convertCronToMessage,
   createCronExpression: createCronExpression,
+  deleteCron: deleteCron,
+  isExistingCron: isExistingCron,
 };

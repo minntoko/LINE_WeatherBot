@@ -21,6 +21,7 @@ const notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
 const usage =
   /(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
 const notificationRegex = /(?=.*の)(?=.*(?:に通知して|につうちして|に通知))/;
+const deleteNotification = /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
   try {
@@ -51,7 +52,7 @@ const handleEvent = async (event) => {
             .map((expression) => {
               return "\n" + convertCronToMessage(expression);
             })
-            .join("、") || "なし"
+            .join("、") || "未設定"
         }です。`
         await client.replyMessage(event.replyToken, {
           type: "text",
@@ -113,6 +114,32 @@ const handleEvent = async (event) => {
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: "時間が正しくありません。もう一度入力してください。",
+          });
+        }
+        break;
+      case deleteNotification.test(text):
+        const deleteExpression = createCronExpression(text);
+        const deleteIndex = targetUser.cronExpression.findIndex(
+          (expression) => expression === deleteExpression
+        );
+        if (deleteIndex !== -1) {
+          targetUser.cronExpression.splice(deleteIndex, 1); // インデックス番号deleteIndexから1つ要素を削除
+          await updateUser({ userId: userId, cronExpression: targetUser.cronExpression });
+          let message = "現在登録せれている通知は\n\n通知時間：";
+          message += targetUser.cronExpression
+            .map((expression) => {
+              return "\n" + convertCronToMessage(expression);
+            })
+            .join("、") || "未設定";
+          message += "です。";
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: message,
+          });
+        } else {
+          await client.replyMessage(event.replyToken, {
+            type: "text",
+            text: "削除したい通知が見つかりませんでした。",
           });
         }
         break;
