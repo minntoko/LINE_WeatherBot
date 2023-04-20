@@ -99,7 +99,7 @@ function createCronExpression(message) {
   console.log(parts);
 
   if (parts[0] === "平日") {
-    return `0 ${minute} ${hour} * * 1-5`;
+    return `0 ${minute} ${hour} * * 1,2,3,4,5`;
   } else if (parts[0] === "土日") {
     return `0 ${minute} ${hour} * * 0,6`;
   } else if (parts[0].includes("から")) {
@@ -124,7 +124,46 @@ const updateCron = ({ expression, userId }) => {
 // すでに登録されているクーロン式かどうかを判定する処理
 const isExistingCron = ({ expression, userId }) => {
   const user = users.find((user) => user.userId === userId);
-  return user.cronExpression.includes(expression); // true or false
+  // return user.cronExpression.includes(expression); // true or false
+
+  const parts = expression.split(" ");
+  // ユーザーのcron式を繰り返し、チェック対象の式と部分的に一致する部分があるかどうかをチェックする。
+  let flag = false;
+  result = false;
+  user.cronExpression.forEach((cron) => {
+    flag = false;
+    const cronParts = cron.split(" ");
+    // 分が一致するかどうか
+    if (parts[1] === cronParts[1]) {
+      flag = true;
+    }
+    // 時が一致するかどうか
+    parts[2] === cronParts[2] && flag ? (flag = true) : (flag = false);
+    // 日が一致するかどうか
+    parts[3] === cronParts[3] && flag ? (flag = true) : (flag = false);
+    // 月が一致するかどうか
+    parts[4] === cronParts[4] && flag ? (flag = true) : (flag = false);
+    // 曜日が一致するかどうか
+    if (parts[5] === cronParts[5] && flag) {
+      result = true;
+    } else {
+      flag = false;
+    }
+    // 平日→金曜日=登録済み, 金曜日→平日=上書き
+    if (cronParts[5].split(',').includes(parts[5])) {
+      // 一部重複している
+      console.log('一部重複している');
+      result = true;
+    } else {
+      // 上書き
+      console.log('上書き');
+      user.cronExpression = user.cronExpression.filter(
+        (existingCron) => existingCron !== cron
+      );
+    }
+  });
+  // 登録済みだった場合はtrueを返す。
+  return result;
 };
 
 // クーロン式を削除する処理
@@ -155,7 +194,7 @@ const convertCronToMessage = (cronExpression) => {
     const dayOfWeek = parts[5];
 
     let message = "毎週";
-    if (dayOfWeek === "1-5") {
+    if (dayOfWeek === "1,2,3,4,5") {
       message += "平日";
     } else if (dayOfWeek === "0,6") {
       message += "土日";
@@ -167,7 +206,7 @@ const convertCronToMessage = (cronExpression) => {
     }
     // 時間によってメッセージを構築する
     message += `の${hour}時`;
-    message += minute === '0' ? "" : minute + "分";
+    message += minute === "0" ? "" : minute + "分";
     return message;
   } catch (err) {
     console.error("Error parsing cron expression", err);
