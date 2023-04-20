@@ -6,6 +6,7 @@ const {
   updateCron,
   convertCronToMessage,
   createCronExpression,
+  isExistingCron,
   users,
 } = require("./setting.js");
 const { getWeather } = require("./weather.js");
@@ -98,6 +99,15 @@ const handleEvent = async (event) => {
           console.log("expressionが正しくありません");
         }
         if (expressionJudge) {
+          // 既に登録されているかを判定する
+          const isExisting = isExistingCron({userId: targetUser.userId, expression: expression});
+          if (isExisting) {
+            await client.replyMessage(event.replyToken, {
+              type: "text",
+              text: "既に登録されている通知です。",
+            });
+            break;
+          };
           updateCron({ expression: expression, userId: userId });
           let message = "現在登録せれている通知は\n\n通知時間：\n";
           message += targetUser.cronExpression
