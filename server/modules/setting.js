@@ -100,7 +100,7 @@ function createCronExpression(message) {
 
   if (parts[0] === "平日") {
     return `0 ${minute} ${hour} * * 1,2,3,4,5`;
-  } else if (parts[0] === "土日") {
+  } else if (parts[0] === "土日"|| parts[0] === "休日") {
     return `0 ${minute} ${hour} * * 0,6`;
   } else if (parts[0].includes("から")) {
     const startDay = weekdays.indexOf(parts[0].split("から")[0]);
