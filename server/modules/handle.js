@@ -7,10 +7,11 @@ const {
   convertCronToMessage,
   createCronExpression,
   isExistingCron,
+  addUser,
   users,
 } = require("./setting.js");
 const { getWeather } = require("./weather.js");
-const  parser = require('cron-parser');
+const parser = require("cron-parser");
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -22,13 +23,19 @@ const notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
 const usage =
   /(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
 const notificationRegex = /(?=.*の)(?=.*(?:に通知して|につうちして|に通知))/;
-const deleteNotification = /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
+const deleteNotification =
+  /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
   try {
+    // 新しいユーザの場合は追加する
+    if (!users.find((user) => user.userId === userId)) {
+      addUser(event.source.userId);
+    }
+
     const text = event.message.text;
     const userId = event.source.userId;
-    const  targetUser = users.find(user => user.userId === userId);
+    const targetUser = users.find((user) => user.userId === userId);
     // メッセージじゃなかったら返信しない
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
@@ -42,7 +49,7 @@ const handleEvent = async (event) => {
         });
         break;
       case regex.test(text):
-       message = await getWeather(targetUser.region || "Nagoya");
+        message = await getWeather(targetUser.region || "Nagoya");
         await client.replyMessage(event.replyToken, message);
         break;
       case settingAll.test(text):
@@ -54,10 +61,10 @@ const handleEvent = async (event) => {
               return "\n" + convertCronToMessage(expression);
             })
             .join("、") || "未設定"
-        }です。`
+        }です。`;
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: message
+          text: message,
         });
         break;
       case notification.test(text):
@@ -100,14 +107,17 @@ const handleEvent = async (event) => {
         }
         if (expressionJudge) {
           // 既に登録されているかを判定する
-          const isExisting = isExistingCron({userId: targetUser.userId, expression: expression});
+          const isExisting = isExistingCron({
+            userId: targetUser.userId,
+            expression: expression,
+          });
           if (isExisting) {
             await client.replyMessage(event.replyToken, {
               type: "text",
               text: "既に登録されている通知です。",
             });
             break;
-          };
+          }
           updateCron({ expression: expression, userId: userId });
           let message = "現在登録せれている通知は\n\n通知時間：\n";
           message += targetUser.cronExpression
@@ -134,13 +144,17 @@ const handleEvent = async (event) => {
         );
         if (deleteIndex !== -1) {
           targetUser.cronExpression.splice(deleteIndex, 1); // インデックス番号deleteIndexから1つ要素を削除
-          await updateUser({ userId: userId, cronExpression: targetUser.cronExpression });
+          await updateUser({
+            userId: userId,
+            cronExpression: targetUser.cronExpression,
+          });
           let message = "現在登録せれている通知は\n\n通知時間：";
-          message += targetUser.cronExpression
-            .map((expression) => {
-              return "\n" + convertCronToMessage(expression);
-            })
-            .join("、") || "未設定";
+          message +=
+            targetUser.cronExpression
+              .map((expression) => {
+                return "\n" + convertCronToMessage(expression);
+              })
+              .join("、") || "未設定";
           message += "です。";
           await client.replyMessage(event.replyToken, {
             type: "text",

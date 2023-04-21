@@ -62,19 +62,12 @@ const updateUser = (newUser) => {
 
 // ユーザを追加する処理
 const addUser = (userId) => {
-  const isExistingUser = users.some((user) => user.userId === userId);
-  if (!isExistingUser) {
-    const newUser = {
-      userId: userId,
-      cronExpression: [],
-      region: null,
-      enabled: true,
-    };
-    users.push(newUser);
-    console.log(`ユーザ登録に成功しました。`);
-  } else {
-    console.log(`すでに登録済みのユーザです。`);
-  }
+  users.push({
+    userId: userId,
+    region: null,
+    cronExpression: [],
+    enabled: true,
+  });
 };
 
 // メッセージからクーロン式に変換する処理
@@ -100,7 +93,7 @@ function createCronExpression(message) {
 
   if (parts[0] === "平日") {
     return `0 ${minute} ${hour} * * 1,2,3,4,5`;
-  } else if (parts[0] === "土日"|| parts[0] === "休日") {
+  } else if (parts[0] === "土日" || parts[0] === "休日") {
     return `0 ${minute} ${hour} * * 0,6`;
   } else if (parts[0].includes("から")) {
     const startDay = weekdays.indexOf(parts[0].split("から")[0]);
@@ -150,13 +143,13 @@ const isExistingCron = ({ expression, userId }) => {
       flag = false;
     }
     // 平日→金曜日=登録済み, 金曜日→平日=上書き
-    if (cronParts[5].split(',').includes(parts[5])) {
+    if (cronParts[5].split(",").includes(parts[5])) {
       // 一部重複している
-      console.log('一部重複している');
+      console.log("一部重複している");
       result = true;
     } else {
       // 上書き
-      console.log('上書き');
+      console.log("上書き");
       user.cronExpression = user.cronExpression.filter(
         (existingCron) => existingCron !== cron
       );
@@ -224,4 +217,5 @@ module.exports = {
   createCronExpression: createCronExpression,
   deleteCron: deleteCron,
   isExistingCron: isExistingCron,
+  addUser: addUser,
 };
