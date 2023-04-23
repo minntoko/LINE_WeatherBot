@@ -27,10 +27,10 @@ const deleteNotification =
   /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
-  const text = event.message.text;
-  const userId = event.source.userId;
-  const targetUser = users.find((user) => user.userId === userId);
   try {
+    const text = event.message.text;
+    const userId = event.source.userId;
+    const targetUser = users.find((user) => user.userId === userId);
     // 新しいユーザの場合は追加する
     if (!targetUser) {
       addUser(event.source.userId);
@@ -71,6 +71,34 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n平日の9時に通知して\n土日の22時に通知してなど。",
+          quickReply: {
+            items: [
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "平日の9時に通知して",
+                  text: "平日の9時に通知して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "土日の22時に通知して",
+                  text: "土日の22時に通知して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "月曜日の8時30分に通知して",
+                  text: "月曜日の8時30分に通知して",
+                },
+              },
+            ],
+          },
         });
         break;
       case usage.test(text):
