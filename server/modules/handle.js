@@ -27,15 +27,15 @@ const deleteNotification =
   /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
+  const text = event.message.text;
+  const userId = event.source.userId;
+  const targetUser = users.find((user) => user.userId === userId);
   try {
     // 新しいユーザの場合は追加する
-    if (!users.find((user) => user.userId === userId)) {
+    if (!targetUser) {
       addUser(event.source.userId);
     }
 
-    const text = event.message.text;
-    const userId = event.source.userId;
-    const targetUser = users.find((user) => user.userId === userId);
     // メッセージじゃなかったら返信しない
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
