@@ -46,6 +46,66 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
+          quickReply: {
+            items: [
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "札幌",
+                  text: "地域を札幌に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "仙台",
+                  text: "地域を仙台に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "東京",
+                  text: "地域を東京に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "名古屋",
+                  text: "地域を名古屋に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "大阪",
+                  text: "地域を大阪に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "福岡",
+                  text: "地域を福岡に設定して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "那覇",
+                  text: "地域を那覇に設定して",
+                },
+              },
+            ],
+          },
         });
         break;
       case regex.test(text):
@@ -77,7 +137,7 @@ const handleEvent = async (event) => {
                 type: "action",
                 action: {
                   type: "message",
-                  label: "平日の9時に通知して",
+                  label: "平日の9時",
                   text: "平日の9時に通知して",
                 },
               },
@@ -85,7 +145,23 @@ const handleEvent = async (event) => {
                 type: "action",
                 action: {
                   type: "message",
-                  label: "土日の22時に通知して",
+                  label: "平日の8時",
+                  text: "平日の8時に通知して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "土日の10時",
+                  text: "土日の10時に通知して",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "土日の22時",
                   text: "土日の22時に通知して",
                 },
               },
@@ -93,7 +169,7 @@ const handleEvent = async (event) => {
                 type: "action",
                 action: {
                   type: "message",
-                  label: "月曜日の8時30分に通知して",
+                  label: "月曜日の8時30分",
                   text: "月曜日の8時30分に通知して",
                 },
               },
