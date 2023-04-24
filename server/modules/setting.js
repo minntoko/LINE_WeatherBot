@@ -139,20 +139,20 @@ const isExistingCron = ({ expression, userId }) => {
     // 曜日が一致するかどうか
     if (parts[5] === cronParts[5] && flag) {
       result = true;
-    } else {
-      flag = false;
     }
-    // 平日→金曜日=登録済み, 金曜日→平日=上書き
-    if (cronParts[5].split(",").includes(parts[5])) {
-      // 一部重複している
-      console.log("一部重複している");
-      result = true;
-    } else {
-      // 上書き
-      console.log("上書き");
-      user.cronExpression = user.cronExpression.filter(
-        (existingCron) => existingCron !== cron
-      );
+    if (flag) {
+      // 平日→金曜日=登録済み, 金曜日→平日=上書き
+      if (cronParts[5].split(",").includes(parts[5])) { // 5 > 1,2,3,4,5 -> false
+        // 一部重複している
+        console.log("重複してる通知があります。");
+        result = true;
+      } else {
+        // 上書き
+        console.log("通知を上書きします。");
+        user.cronExpression = user.cronExpression.filter(
+          (existingCron) => existingCron !== cron
+        );
+      }
     }
   });
   // 登録済みだった場合はtrueを返す。
