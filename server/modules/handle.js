@@ -41,6 +41,28 @@ const handleEvent = async (event) => {
       return null;
     }
     let message = "";
+    
+    // 通知設定の場合
+    const messageCrons = targetUser.cronExpression.slice(0, 12);
+    const items = messageCrons.map((cron) => {
+      return {
+        type: "action",
+        action: {
+          type: "message",
+          label: `${convertCronToMessage(cron)}を削除`,
+          text: `${convertCronToMessage(cron)}の通知を削除して`,
+        },
+      };
+    });
+    items.unshift({
+      type: "action",
+      action: {
+        type: "message",
+        label: "使い方について",
+        text: "使い方を教えて",
+      },
+    });
+
     switch (true) {
       case regionRegister.test(text):
         await client.replyMessage(event.replyToken, {
@@ -122,9 +144,38 @@ const handleEvent = async (event) => {
             })
             .join("、") || "未設定"
         }です。`;
+        const messageCrons = targetUser.cronExpression.slice(0, 11);
+        const items = messageCrons.map((cron) => {
+          return {
+            type: "action",
+            action: {
+              type: "message",
+              label: `${convertCronToMessage(cron)}を削除`,
+              text: `${convertCronToMessage(cron)}の通知を削除して`,
+            },
+          };
+        });
+        items.unshift({
+          type: "action",
+          action: {
+            type: "message",
+            label: "地域を設定",
+            text: "地域の設定",
+          },
+        },{
+          type: "action",
+          action: {
+            type: "message",
+            label: "通知の設定",
+            text: "通知時間の設定",
+          },
+        });
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: message,
+          quickReply: {
+            items: items,
+          },
         });
         break;
       case notification.test(text):
@@ -230,9 +281,33 @@ const handleEvent = async (event) => {
             })
             .join("、\n");
           message += "です。";
+
+          const messageCrons = targetUser.cronExpression.slice(0, 12);
+          const items = messageCrons.map((cron) => {
+            return {
+              type: "action",
+              action: {
+                type: "message",
+                label: `${convertCronToMessage(cron)}を削除`,
+                text: `${convertCronToMessage(cron)}の通知を削除して`,
+              },
+            };
+          });
+          items.unshift({
+            type: "action",
+            action: {
+              type: "message",
+              label: "使い方について",
+              text: "使い方を教えて",
+            },
+          });
+
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: message,
+            quickReply: {
+              items: items,
+            },
           });
         } else {
           await client.replyMessage(event.replyToken, {
@@ -260,9 +335,32 @@ const handleEvent = async (event) => {
               })
               .join("、") || "未設定";
           message += "です。";
+
+          const messageCrons = targetUser.cronExpression.slice(0, 12);
+          const items = messageCrons.map((cron) => {
+            return {
+              type: "action",
+              action: {
+                type: "message",
+                label: `${convertCronToMessage(cron)}を削除`,
+                text: `${convertCronToMessage(cron)}の通知を削除して`,
+              },
+            };
+          });
+          items.unshift({
+            type: "action",
+            action: {
+              type: "message",
+              label: "通知の設定",
+              text: "通知時間の設定",
+            },
+          });
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: message,
+            quickReply: {
+              items: items,
+            },
           });
         } else {
           await client.replyMessage(event.replyToken, {
