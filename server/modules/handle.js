@@ -15,6 +15,7 @@ const parser = require("cron-parser");
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
+const wheserRegex = /(.+)の(?=.*(?:天気|てんき))(?=.*(?:教えて|おしえて))/; // 他の地域の天気を教えて
 const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
 const regionRegex = /地域を(.+)(?:に変更して|にして|に設定して)/;
 const settingAll =
@@ -41,27 +42,6 @@ const handleEvent = async (event) => {
       return null;
     }
     let message = "";
-    
-    // 通知設定の場合
-    const messageCrons = targetUser.cronExpression.slice(0, 12);
-    const items = messageCrons.map((cron) => {
-      return {
-        type: "action",
-        action: {
-          type: "message",
-          label: `${convertCronToMessage(cron)}を削除`,
-          text: `${convertCronToMessage(cron)}の通知を削除して`,
-        },
-      };
-    });
-    items.unshift({
-      type: "action",
-      action: {
-        type: "message",
-        label: "使い方について",
-        text: "使い方を教えて",
-      },
-    });
 
     switch (true) {
       case regionRegister.test(text):
@@ -130,9 +110,81 @@ const handleEvent = async (event) => {
           },
         });
         break;
+      case wheserRegex.test(text):
+        const otherRegion = convertCityName(text.match(wheserRegex)[1]);
+        message = await getWeather(otherRegion); // 他の地域の天気
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: message,
+        });
+        break;
       case regex.test(text):
         message = await getWeather(targetUser.region || "Nagoya");
-        await client.replyMessage(event.replyToken, message);
+        console.log(message);
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: message,
+          quickReply: {
+            items: [
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "札幌の天気",
+                  text: "札幌の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "仙台の天気",
+                  text: "仙台の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "東京の天気",
+                  text: "東京の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "名古屋の天気",
+                  text: "名古屋の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "大阪の天気",
+                  text: "大阪の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "福岡の天気",
+                  text: "福岡の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "那覇の天気",
+                  text: "那覇の天気を教えて",
+                },
+              },
+            ],
+          },
+        });
         break;
       case settingAll.test(text):
         message = `現在登録せれている設定は\n\n地域：${
@@ -155,21 +207,24 @@ const handleEvent = async (event) => {
             },
           };
         });
-        items.unshift({
-          type: "action",
-          action: {
-            type: "message",
-            label: "地域を設定",
-            text: "地域の設定",
+        items.unshift(
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "地域を設定",
+              text: "地域の設定",
+            },
           },
-        },{
-          type: "action",
-          action: {
-            type: "message",
-            label: "通知の設定",
-            text: "通知時間の設定",
-          },
-        });
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "通知の設定",
+              text: "通知時間の設定",
+            },
+          }
+        );
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: message,

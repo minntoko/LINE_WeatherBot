@@ -37,10 +37,7 @@ const getWeather = async (city) => {
   const temp = response.main.temp.toFixed(1);
   const weather = convertWeather(response.weather[0].main);
 
-  return {
-    type: "text",
-    text: `現在の${response.name}の天気は${weather}です。気温は${temp}°Cです。`,
-  };
+  return `現在の${response.name}の天気は${weather}です。気温は${temp}°Cです。`;
 };
 
 module.exports = {
