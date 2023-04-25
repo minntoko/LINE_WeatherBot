@@ -247,15 +247,118 @@ const handleEvent = async (event) => {
         });
         break;
       case settingAll.test(text):
-        message = `現在登録せれている設定は\n\n地域：${
-          reverseConvert(targetUser.region) || "なし"
-        }\n通知時間：${
-          targetUser.cronExpression
-            .map((expression) => {
-              return "\n" + convertCronToMessage(expression);
-            })
-            .join("、") || "未設定"
-        }です。`;
+        
+      const flexMessages = targetUser.cronExpression.map((expression) => [
+        {
+          type: "separator",
+          margin: "md",
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          contents: [
+            {
+              type: "text",
+              text: convertCronToMessage(expression),
+              color: "#555555",
+              size: "md",
+              align: "center",
+            },
+          ],
+          margin: "xxl",
+        },
+      ]);
+      const flattenedMessages = [].concat(...flexMessages);
+      contents = {
+          type: "bubble",
+          body: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "text",
+                text: "天気予報くん",
+                weight: "bold",
+                color: "#7ABEf3",
+                size: "sm",
+              },
+              {
+                type: "text",
+                text: "現在の設定",
+                weight: "bold",
+                size: "xl",
+                margin: "md",
+              },
+              {
+                type: "separator",
+                margin: "xxl",
+              },
+              {
+                type: "box",
+                layout: "vertical",
+                margin: "xxl",
+                spacing: "sm",
+                contents: [
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "設定地域",
+                        size: "md",
+                        color: "#555555",
+                        flex: 0,
+                        weight: "bold",
+                      },
+                      {
+                        type: "text",
+                        text: reverseConvert(targetUser.region) || "なし",
+                        size: "md",
+                        color: "#555555",
+                        align: "end",
+                      },
+                    ],
+                  },
+                  {
+                    type: "separator",
+                    margin: "xxl",
+                  },
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    margin: "xxl",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "設定通知",
+                        size: "md",
+                        color: "#555555",
+                        weight: "bold",
+                      },
+                      {
+                        type: "text",
+                        text:
+                          targetUser.cronExpression.length === 0
+                            ? "なし"
+                            : targetUser.cronExpression.length + "件",
+                        align: "end",
+                        size: "md",
+                        color: "#555555",
+                      },
+                    ],
+                  },
+                  ...flattenedMessages,
+                ],
+              },
+            ],
+          },
+          styles: {
+            footer: {
+              separator: true,
+            },
+          },
+        };
         const messageCrons = targetUser.cronExpression.slice(0, 11);
         const items = messageCrons.map((cron) => {
           return {
@@ -286,8 +389,9 @@ const handleEvent = async (event) => {
           }
         );
         await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: message,
+          type: "flex",
+          altText: "天気予報",
+          contents: contents,
           quickReply: {
             items: items,
           },
@@ -380,9 +484,9 @@ const handleEvent = async (event) => {
                   label: "現在の設定",
                   text: "現在の設定を表示",
                 },
-              }
+              },
             ],
-          }
+          },
         });
         break;
       case regionRegex.test(text):
@@ -419,7 +523,7 @@ const handleEvent = async (event) => {
                   },
                 },
               ],
-            }
+            },
           });
         } else {
           await client.replyMessage(event.replyToken, {
@@ -472,21 +576,24 @@ const handleEvent = async (event) => {
               },
             };
           });
-          items.unshift({
-            type: "action",
-            action: {
-              type: "message",
-              label: "使い方について",
-              text: "使い方を教えて",
+          items.unshift(
+            {
+              type: "action",
+              action: {
+                type: "message",
+                label: "使い方について",
+                text: "使い方を教えて",
+              },
             },
-          },{
-            type: "action",
-            action: {
-              type: "message",
-              label: "通知を追加",
-              text: "通知時間の設定",
-            },
-          });
+            {
+              type: "action",
+              action: {
+                type: "message",
+                label: "通知を追加",
+                text: "通知時間の設定",
+              },
+            }
+          );
 
           await client.replyMessage(event.replyToken, {
             type: "text",
