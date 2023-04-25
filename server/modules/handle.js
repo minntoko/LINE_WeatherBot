@@ -116,6 +116,66 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: message,
+          quickReply: {
+            items: [
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "札幌の天気",
+                  text: "札幌の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "仙台の天気",
+                  text: "仙台の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "東京の天気",
+                  text: "東京の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "名古屋の天気",
+                  text: "名古屋の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "大阪の天気",
+                  text: "大阪の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "福岡の天気",
+                  text: "福岡の天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "那覇の天気",
+                  text: "那覇の天気を教えて",
+                },
+              },
+            ],
+          },
         });
         break;
       case regex.test(text):
@@ -287,6 +347,42 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, {
           type: "text",
           text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
+          quickReply: {
+            items: [
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "地域を設定",
+                  text: "地域の設定",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "通知の設定",
+                  text: "通知時間の設定",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "現在の天気",
+                  text: "天気を教えて",
+                },
+              },
+              {
+                type: "action",
+                action: {
+                  type: "message",
+                  label: "現在の設定",
+                  text: "現在の設定を表示",
+                },
+              }
+            ],
+          }
         });
         break;
       case regionRegex.test(text):
@@ -295,7 +391,35 @@ const handleEvent = async (event) => {
           await updateUser({ userId: userId, region: region });
           await client.replyMessage(event.replyToken, {
             type: "text",
-            text: `地域を${reverseConvert(region)}に設定しました。`,
+            text: `登録地域を${reverseConvert(region)}に設定しました。`,
+            quickReply: {
+              items: [
+                {
+                  type: "action",
+                  action: {
+                    type: "message",
+                    label: "地域を再設定",
+                    text: "地域の設定",
+                  },
+                },
+                {
+                  type: "action",
+                  action: {
+                    type: "message",
+                    label: "通知の設定",
+                    text: "通知時間の設定",
+                  },
+                },
+                {
+                  type: "action",
+                  action: {
+                    type: "message",
+                    label: "現在の天気",
+                    text: "天気を教えて",
+                  },
+                },
+              ],
+            }
           });
         } else {
           await client.replyMessage(event.replyToken, {
@@ -337,7 +461,7 @@ const handleEvent = async (event) => {
             .join("、\n");
           message += "です。";
 
-          const messageCrons = targetUser.cronExpression.slice(0, 12);
+          const messageCrons = targetUser.cronExpression.slice(0, 11);
           const items = messageCrons.map((cron) => {
             return {
               type: "action",
@@ -354,6 +478,13 @@ const handleEvent = async (event) => {
               type: "message",
               label: "使い方について",
               text: "使い方を教えて",
+            },
+          },{
+            type: "action",
+            action: {
+              type: "message",
+              label: "通知を追加",
+              text: "通知時間の設定",
             },
           });
 
