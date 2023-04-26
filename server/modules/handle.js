@@ -247,13 +247,7 @@ const handleEvent = async (event) => {
         });
         break;
       case settingAll.test(text):
-        
-      const flexMessages = targetUser.cronExpression.map((expression) => [
-        {
-          type: "separator",
-          margin: "md",
-        },
-        {
+        const flexMessages = targetUser.cronExpression.map((expression) => ({
           type: "box",
           layout: "vertical",
           contents: [
@@ -266,10 +260,12 @@ const handleEvent = async (event) => {
             },
           ],
           margin: "xxl",
-        },
-      ]);
-      const flattenedMessages = [].concat(...flexMessages);
-      contents = {
+        }));
+        const flattenedMessages = flexMessages.reduce(
+          (prev, current) => prev.concat(current),
+          []
+          );
+        contents = {
           type: "bubble",
           body: {
             type: "box",
@@ -331,7 +327,7 @@ const handleEvent = async (event) => {
                     contents: [
                       {
                         type: "text",
-                        text: "設定通知",
+                        text: "設定した通知",
                         size: "md",
                         color: "#555555",
                         weight: "bold",
@@ -678,3 +674,147 @@ const handleEvent = async (event) => {
 module.exports = {
   handleEvent: handleEvent,
 };
+
+// 地域のフレックスメッセージ
+
+// {
+//   "type": "bubble",
+//   "body": {
+//     "type": "box",
+//     "layout": "vertical",
+//     "contents": [
+//       {
+//         "type": "text",
+//         "text": "天気予報くん",
+//         "weight": "bold",
+//         "color": "#7ABEf3",
+//         "size": "sm"
+//       },
+//       {
+//         "type": "text",
+//         "weight": "bold",
+//         "size": "xxl",
+//         "margin": "md",
+//         "text": "地域を設定"
+//       },
+//       {
+//         "type": "separator",
+//         "margin": "xxl"
+//       },
+//       {
+//         "type": "box",
+//         "layout": "vertical",
+//         "margin": "xxl",
+//         "spacing": "sm",
+//         "contents": [
+//           {
+//             "type": "box",
+//             "layout": "horizontal",
+//             "contents": [
+//               {
+//                 "type": "text",
+//                 "text": "設定地域",
+//                 "size": "md",
+//                 "color": "#555555",
+//                 "flex": 0,
+//                 "weight": "bold"
+//               },
+//               {
+//                 "type": "text",
+//                 "text": "名古屋",
+//                 "size": "md",
+//                 "color": "#555555",
+//                 "align": "end"
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   "styles": {
+//     "footer": {
+//       "separator": true
+//     }
+//   }
+// }
+
+// 通知のフレックスメッセージ
+// {
+//   "type": "bubble",
+//   "body": {
+//     "type": "box",
+//     "layout": "vertical",
+//     "contents": [
+//       {
+//         "type": "text",
+//         "text": "天気予報くん",
+//         "weight": "bold",
+//         "color": "#7ABEf3",
+//         "size": "sm"
+//       },
+//       {
+//         "type": "text",
+//         "weight": "bold",
+//         "size": "xxl",
+//         "margin": "md",
+//         "text": "通知を設定"
+//       },
+//       {
+//         "type": "separator",
+//         "margin": "xxl"
+//       },
+//       {
+//         "type": "box",
+//         "layout": "vertical",
+//         "margin": "xxl",
+//         "spacing": "sm",
+//         "contents": [
+//           {
+//             "type": "box",
+//             "layout": "horizontal",
+//             "contents": [
+//               {
+//                 "type": "text",
+//                 "text": "設定した通知",
+//                 "size": "md",
+//                 "color": "#555555",
+//                 "flex": 0,
+//                 "weight": "bold"
+//               },
+//               {
+//                 "type": "text",
+//                 "text": "2件",
+//                 "size": "md",
+//                 "color": "#555555",
+//                 "align": "end"
+//               }
+//             ]
+//           },
+//           {
+//             "type": "separator",
+//             "margin": "xxl"
+//           },
+//           {
+//             "type": "box",
+//             "layout": "vertical",
+//             "contents": [
+//               {
+//                 "type": "text",
+//                 "text": "毎週平日の19時30分",
+//                 "align": "center",
+//                 "size": "md",
+//                 "margin": "xxl"
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   "styles": {
+//     "footer": {
+//       "separator": true
+//     }
+//   }
+// }
