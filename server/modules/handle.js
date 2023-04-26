@@ -261,10 +261,15 @@ const handleEvent = async (event) => {
           ],
           margin: "xxl",
         }));
-        const flattenedMessages = flexMessages.reduce(
-          (prev, current) => prev.concat(current),
-          []
-          );
+        const newObj = {
+          type: "separator",
+          margin: "xxl",
+        };
+        console.log('ここまできてる？');
+        const flattenedMessages = flexMessages.reduce((acc, current) => {
+          acc.push(newObj,current);
+          return acc;
+        }, []);
         contents = {
           type: "bubble",
           body: {
