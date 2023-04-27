@@ -265,9 +265,9 @@ const handleEvent = async (event) => {
           type: "separator",
           margin: "xxl",
         };
-        console.log('ここまできてる？');
+        console.log("ここまできてる？");
         const flattenedMessages = flexMessages.reduce((acc, current) => {
-          acc.push(newObj,current);
+          acc.push(newObj, current);
           return acc;
         }, []);
         contents = {
@@ -494,9 +494,71 @@ const handleEvent = async (event) => {
         const region = convertCityName(text.match(regionRegex)[1]);
         if (region) {
           await updateUser({ userId: userId, region: region });
+          const contents = {
+            type: "bubble",
+            body: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "text",
+                  text: "天気予報くん",
+                  weight: "bold",
+                  color: "#7ABEf3",
+                  size: "sm",
+                },
+                {
+                  type: "text",
+                  weight: "bold",
+                  size: "xl",
+                  margin: "md",
+                  text: "地域を設定",
+                },
+                {
+                  type: "separator",
+                  margin: "xxl",
+                },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  margin: "xxl",
+                  spacing: "sm",
+                  contents: [
+                    {
+                      type: "box",
+                      layout: "horizontal",
+                      contents: [
+                        {
+                          type: "text",
+                          text: "設定地域",
+                          size: "md",
+                          color: "#555555",
+                          flex: 0,
+                          weight: "bold",
+                        },
+                        {
+                          type: "text",
+                          text: reverseConvert(region),
+                          size: "md",
+                          color: "#555555",
+                          align: "end",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            styles: {
+              footer: {
+                separator: true,
+              },
+            },
+          };
           await client.replyMessage(event.replyToken, {
-            type: "text",
-            text: `登録地域を${reverseConvert(region)}に設定しました。`,
+            type: "flex",
+            altText: "天気予報",
+            contents: contents,
             quickReply: {
               items: [
                 {
@@ -680,70 +742,6 @@ module.exports = {
   handleEvent: handleEvent,
 };
 
-// 地域のフレックスメッセージ
-
-// {
-//   "type": "bubble",
-//   "body": {
-//     "type": "box",
-//     "layout": "vertical",
-//     "contents": [
-//       {
-//         "type": "text",
-//         "text": "天気予報くん",
-//         "weight": "bold",
-//         "color": "#7ABEf3",
-//         "size": "sm"
-//       },
-//       {
-//         "type": "text",
-//         "weight": "bold",
-//         "size": "xxl",
-//         "margin": "md",
-//         "text": "地域を設定"
-//       },
-//       {
-//         "type": "separator",
-//         "margin": "xxl"
-//       },
-//       {
-//         "type": "box",
-//         "layout": "vertical",
-//         "margin": "xxl",
-//         "spacing": "sm",
-//         "contents": [
-//           {
-//             "type": "box",
-//             "layout": "horizontal",
-//             "contents": [
-//               {
-//                 "type": "text",
-//                 "text": "設定地域",
-//                 "size": "md",
-//                 "color": "#555555",
-//                 "flex": 0,
-//                 "weight": "bold"
-//               },
-//               {
-//                 "type": "text",
-//                 "text": "名古屋",
-//                 "size": "md",
-//                 "color": "#555555",
-//                 "align": "end"
-//               }
-//             ]
-//           }
-//         ]
-//       }
-//     ]
-//   },
-//   "styles": {
-//     "footer": {
-//       "separator": true
-//     }
-//   }
-// }
-
 // 通知のフレックスメッセージ
 // {
 //   "type": "bubble",
@@ -761,7 +759,7 @@ module.exports = {
 //       {
 //         "type": "text",
 //         "weight": "bold",
-//         "size": "xxl",
+//         "size": "xl",
 //         "margin": "md",
 //         "text": "通知を設定"
 //       },
