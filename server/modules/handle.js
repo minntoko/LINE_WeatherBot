@@ -1,5 +1,5 @@
 const { client } = require("./config.js");
-const {NotifFlexMessages} = require("./flexmessage.js");
+const { notifFlexMessages, regionFlexMessages } = require("./flexmessage.js");
 const {
   updateUser,
   convertCityName,
@@ -494,67 +494,7 @@ const handleEvent = async (event) => {
         const region = convertCityName(text.match(regionRegex)[1]);
         if (region) {
           await updateUser({ userId: userId, region: region });
-          const contents = {
-            type: "bubble",
-            body: {
-              type: "box",
-              layout: "vertical",
-              contents: [
-                {
-                  type: "text",
-                  text: "天気予報くん",
-                  weight: "bold",
-                  color: "#7ABEf3",
-                  size: "sm",
-                },
-                {
-                  type: "text",
-                  weight: "bold",
-                  size: "xl",
-                  margin: "md",
-                  text: "地域の設定",
-                },
-                {
-                  type: "separator",
-                  margin: "xxl",
-                },
-                {
-                  type: "box",
-                  layout: "vertical",
-                  margin: "xxl",
-                  spacing: "sm",
-                  contents: [
-                    {
-                      type: "box",
-                      layout: "horizontal",
-                      contents: [
-                        {
-                          type: "text",
-                          text: "設定地域",
-                          size: "md",
-                          color: "#555555",
-                          flex: 0,
-                          weight: "bold",
-                        },
-                        {
-                          type: "text",
-                          text: reverseConvert(region),
-                          size: "md",
-                          color: "#555555",
-                          align: "end",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            styles: {
-              footer: {
-                separator: true,
-              },
-            },
-          };
+          const contents = regionFlexMessages(region);
           await client.replyMessage(event.replyToken, {
             type: "flex",
             altText: "天気予報",
@@ -632,7 +572,7 @@ const handleEvent = async (event) => {
           //   .join("、\n");
           // message += "です。";
 
-          const contents = NotifFlexMessages(targetUser);
+          const contents = notifFlexMessages(targetUser);
 
           const messageCrons = targetUser.cronExpression.slice(0, 11);
           const items = messageCrons.map((cron) => {

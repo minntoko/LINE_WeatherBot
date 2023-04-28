@@ -1,6 +1,6 @@
-const {convertCronToMessage} = require("./setting");
+const {convertCronToMessage, reverseConvert} = require("./setting");
 
-const NotifFlexMessages = (targetUser) => {
+const notifFlexMessages = (targetUser) => {
   const flexMessages = targetUser.cronExpression.map((expression) => ({
     type: "box",
     layout: "vertical",
@@ -97,6 +97,72 @@ const NotifFlexMessages = (targetUser) => {
   return NotifContents;
 };
 
+const regionFlexMessages = (region) => {
+  const regionContents = {
+    type: "bubble",
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: [
+        {
+          type: "text",
+          text: "天気予報くん",
+          weight: "bold",
+          color: "#7ABEf3",
+          size: "sm",
+        },
+        {
+          type: "text",
+          weight: "bold",
+          size: "xl",
+          margin: "md",
+          text: "地域の設定",
+        },
+        {
+          type: "separator",
+          margin: "xxl",
+        },
+        {
+          type: "box",
+          layout: "vertical",
+          margin: "xxl",
+          spacing: "sm",
+          contents: [
+            {
+              type: "box",
+              layout: "horizontal",
+              contents: [
+                {
+                  type: "text",
+                  text: "設定地域",
+                  size: "md",
+                  color: "#555555",
+                  flex: 0,
+                  weight: "bold",
+                },
+                {
+                  type: "text",
+                  text: reverseConvert(region),
+                  size: "md",
+                  color: "#555555",
+                  align: "end",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    styles: {
+      footer: {
+        separator: true,
+      },
+    },
+  };
+  return regionContents;
+};
+
 module.exports = {
-  NotifFlexMessages: NotifFlexMessages
+  notifFlexMessages: notifFlexMessages,
+  regionFlexMessages: regionFlexMessages,
 };
