@@ -72,7 +72,6 @@ const addUser = (userId) => {
 
 // メッセージからクーロン式に変換する処理
 // 例：「平日の9時に通知して」→「0 0 9 * * Mon-Fri」
-// 例：「月から金の9時に通知して」→「0 0 9 * * Mon-Fri」
 // 例：「土日の10時に通知して」→「0 0 10 * * Sat-Sun」
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
 // 課題　→　ありえない時間を指定した場合の処理
@@ -95,10 +94,6 @@ function createCronExpression(message) {
     return `0 ${minute} ${hour} * * 1,2,3,4,5`;
   } else if (parts[0] === "土日" || parts[0] === "休日") {
     return `0 ${minute} ${hour} * * 0,6`;
-  } else if (parts[0].includes("から")) {
-    const startDay = weekdays.indexOf(parts[0].split("から")[0]);
-    const endDay = weekdays.indexOf(parts[0].split("から")[1]);
-    return `${minute} ${hour} * * ${startDay}-${endDay}`;
   } else if (weekdays.includes(parts[0])) {
     const dayOfWeek = weekdays.indexOf(parts[0]);
     return `0 ${minute} ${hour} * * ${dayOfWeek}`;
