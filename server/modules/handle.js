@@ -1,4 +1,5 @@
 const { client } = require("./config.js");
+const {NotifFlexMessages} = require("./flexmessage.js");
 const {
   updateUser,
   convertCityName,
@@ -19,7 +20,7 @@ const wheserRegex = /(.+)の(?=.*(?:天気|てんき))(?=.*(?:教えて|おし�
 const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
 const regionRegex = /地域を(.+)(?:に変更して|にして|に設定して)/;
 const settingAll =
-  /(?=.*(?:現在|げんざい))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
+  /(?=.*(?:全て|現在))(?=.*(?:設定|せってい))(?=.*(?:表示|ひょうじ))/;
 const notification = /(?=.*(?:通知|つうち))(?=.*(?:設定|せってい))/;
 const usage =
   /(?=.*(?:使い方|つかいかた|使用方法|しようほうほう))(?=.*(?:教えて|おしえて|知りたい|しりたい))/;
@@ -265,7 +266,6 @@ const handleEvent = async (event) => {
           type: "separator",
           margin: "xxl",
         };
-        console.log("ここまできてる？");
         const flattenedMessages = flexMessages.reduce((acc, current) => {
           acc.push(newObj, current);
           return acc;
@@ -285,7 +285,7 @@ const handleEvent = async (event) => {
               },
               {
                 type: "text",
-                text: "現在の設定",
+                text: "全ての設定",
                 weight: "bold",
                 size: "xl",
                 margin: "md",
@@ -512,7 +512,7 @@ const handleEvent = async (event) => {
                   weight: "bold",
                   size: "xl",
                   margin: "md",
-                  text: "地域を設定",
+                  text: "地域の設定",
                 },
                 {
                   type: "separator",
@@ -597,7 +597,11 @@ const handleEvent = async (event) => {
         break;
       case notificationRegex.test(text):
         // createCronExpressionをここで行う
-        const expression = createCronExpression(text);
+        try {
+          const expression = createCronExpression(text);
+        } catch (error) {
+          const expression = false;
+        }
         // expressionが正しい可動かを判定する
         let expressionJudge = false;
         try {
@@ -620,13 +624,15 @@ const handleEvent = async (event) => {
             break;
           }
           updateCron({ expression: expression, userId: userId });
-          let message = "現在登録せれている通知は\n\n通知時間：\n";
-          message += targetUser.cronExpression
-            .map((expression) => {
-              return convertCronToMessage(expression);
-            })
-            .join("、\n");
-          message += "です。";
+          // let message = "現在登録せれている通知は\n\n通知時間：\n";
+          // message += targetUser.cronExpression
+          //   .map((expression) => {
+          //     return convertCronToMessage(expression);
+          //   })
+          //   .join("、\n");
+          // message += "です。";
+
+          const contents = NotifFlexMessages(targetUser);
 
           const messageCrons = targetUser.cronExpression.slice(0, 11);
           const items = messageCrons.map((cron) => {
@@ -659,8 +665,9 @@ const handleEvent = async (event) => {
           );
 
           await client.replyMessage(event.replyToken, {
-            type: "text",
-            text: message,
+            type: "flex",
+            altText: "天気予報",
+            contents: contents,
             quickReply: {
               items: items,
             },
@@ -741,83 +748,3 @@ const handleEvent = async (event) => {
 module.exports = {
   handleEvent: handleEvent,
 };
-
-// 通知のフレックスメッセージ
-// {
-//   "type": "bubble",
-//   "body": {
-//     "type": "box",
-//     "layout": "vertical",
-//     "contents": [
-//       {
-//         "type": "text",
-//         "text": "天気予報くん",
-//         "weight": "bold",
-//         "color": "#7ABEf3",
-//         "size": "sm"
-//       },
-//       {
-//         "type": "text",
-//         "weight": "bold",
-//         "size": "xl",
-//         "margin": "md",
-//         "text": "通知を設定"
-//       },
-//       {
-//         "type": "separator",
-//         "margin": "xxl"
-//       },
-//       {
-//         "type": "box",
-//         "layout": "vertical",
-//         "margin": "xxl",
-//         "spacing": "sm",
-//         "contents": [
-//           {
-//             "type": "box",
-//             "layout": "horizontal",
-//             "contents": [
-//               {
-//                 "type": "text",
-//                 "text": "設定した通知",
-//                 "size": "md",
-//                 "color": "#555555",
-//                 "flex": 0,
-//                 "weight": "bold"
-//               },
-//               {
-//                 "type": "text",
-//                 "text": "2件",
-//                 "size": "md",
-//                 "color": "#555555",
-//                 "align": "end"
-//               }
-//             ]
-//           },
-//           {
-//             "type": "separator",
-//             "margin": "xxl"
-//           },
-//           {
-//             "type": "box",
-//             "layout": "vertical",
-//             "contents": [
-//               {
-//                 "type": "text",
-//                 "text": "毎週平日の19時30分",
-//                 "align": "center",
-//                 "size": "md",
-//                 "margin": "xxl"
-//               }
-//             ]
-//           }
-//         ]
-//       }
-//     ]
-//   },
-//   "styles": {
-//     "footer": {
-//       "separator": true
-//     }
-//   }
-// }
