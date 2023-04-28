@@ -146,12 +146,16 @@ const isExistingCron = ({ expression, userId }) => {
         // 一部重複している
         console.log("重複してる通知があります。");
         result = true;
-      } else {
-        // 上書き
+        // else ifでpartsのlengthも1だったらresult = falseにする
+      } else if (!cronParts[5].split(",").length === 1) {
+        // 上書き 月曜日の9時に通知して→火曜日の9時に通知してが上書きされてしまう
         console.log("通知を上書きします。");
         user.cronExpression = user.cronExpression.filter(
           (existingCron) => existingCron !== cron
         );
+      } else {
+        // 重複していない
+        console.log("通知を追加します。");
       }
     }
   });
