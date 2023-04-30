@@ -31,7 +31,7 @@ const deleteNotification =
   /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
-  // try {
+  try {
     const text = event.message.text;
     const userId = event.source.userId;
     const targetUser = users.find((user) => user.userId === userId);
@@ -58,20 +58,28 @@ const handleEvent = async (event) => {
         break;
       case wheserRegex.test(text):
         const otherRegion = convertCityName(text.match(wheserRegex)[1]);
+        const otherRegionName = reverseConvert(otherRegion);
         message = await getWeather(otherRegion); // 他の地域の天気
-        await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: message,
-          quickReply: {
-            items: weatherReplyItems
-          },
-        });
+        const otherRegionContents = await getWeatherFlex(otherRegion);
+        const otherRegionMessages = [
+          { type: "text", text: `${otherRegionName}の天気をお伝えします。` },
+          {
+            type: "flex",
+            altText: message,
+            contents: otherRegionContents,
+            quickReply: {
+              items: weatherReplyItems
+            },
+          }
+        ];
+
+        await client.replyMessage(event.replyToken, otherRegionMessages);
         break;
       case regex.test(text):
         const regionName = reverseConvert(targetUser.region || 'Nagoya');
         message = await getWeather(targetUser.region || "Nagoya");
         const weatherContents = await getWeatherFlex(targetUser.region || "Nagoya");
-        const messages = [
+        const weatherMessages = [
           { type: "text", text: `${regionName}の天気をお伝えします。` },
           {
             type: "flex",
@@ -82,7 +90,7 @@ const handleEvent = async (event) => {
             },
           }
         ]
-        await client.replyMessage(event.replyToken, messages);
+        await client.replyMessage(event.replyToken, weatherMessages);
         break;
       case settingAll.test(text):
         const contents = settingAllFlexMessages(targetUser);
@@ -236,9 +244,13 @@ const handleEvent = async (event) => {
         break;
     }
     return null;
-  // } catch {
-  //   console.error("エラーが発生しました");
-  // }
+  } catch {
+    await client.replyMessage(event.replyToken, {
+      type: "text",
+      text: `すいません、よく分かりませんでした。`,
+    });
+    console.error("エラーが発生しました");
+  }
 };
 
 module.exports = {
