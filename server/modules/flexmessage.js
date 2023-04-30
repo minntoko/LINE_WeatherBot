@@ -1,4 +1,4 @@
-const {convertCronToMessage, reverseConvert} = require("./setting");
+const { convertCronToMessage, reverseConvert } = require("./setting");
 
 const settingAllFlexMessages = (targetUser) => {
   const flexMessages = targetUser.cronExpression.map((expression) => ({
@@ -278,8 +278,82 @@ const regionFlexMessages = (region) => {
   return regionContents;
 };
 
+const weatherFlexMessages = ({ city, weather, temp }) => {
+  const weatherContents = {
+    type: "bubble",
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: [
+        {
+          type: "box",
+          layout: "vertical",
+          contents: [
+            {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "text",
+                  contents: [],
+                  size: "xl",
+                  wrap: true,
+                  text: "現在の天気 ⛅️",
+                  color: "#ffffff",
+                  weight: "bold",
+                },
+                {
+                  type: "text",
+                  text: `地域 ${city}`,
+                  color: "#ffffffcc",
+                  size: "sm",
+                  margin: "md"
+                },
+              ],
+              spacing: "sm",
+            },
+            {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "box",
+                  layout: "vertical",
+                  contents: [
+                    {
+                      type: "text",
+                      contents: [],
+                      size: "sm",
+                      wrap: true,
+                      color: "#ffffffde",
+                      text: `天気は${weather}\n気温は${temp}°Cです。`,
+                    },
+                  ],
+                },
+              ],
+              paddingAll: "13px",
+              backgroundColor: "#ffffff1A",
+              cornerRadius: "4px",
+              margin: "xl",
+            },
+          ],
+        },
+      ],
+      paddingAll: "20px",
+      background: {
+        type: "linearGradient",
+        angle: "135deg",
+        startColor: "#418DFD",
+        endColor: "#2ED4FF",
+      },
+    },
+  };
+  return weatherContents;
+};
+
 module.exports = {
   settingAllFlexMessages: settingAllFlexMessages,
   notifFlexMessages: notifFlexMessages,
   regionFlexMessages: regionFlexMessages,
+  weatherFlexMessages: weatherFlexMessages,
 };
