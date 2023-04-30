@@ -11,8 +11,10 @@ const {
   addUser,
   users,
 } = require("./setting.js");
-const { getWeather } = require("./weather.js");
+const { getWeather, getWeatherFlex } = require("./weather.js");
 const parser = require("cron-parser");
+const { weatherReplyItems } = require("./reply.js");
+console.log(weatherReplyItems);
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -50,64 +52,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
           quickReply: {
-            items: [
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "札幌",
-                  text: "地域を札幌に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "仙台",
-                  text: "地域を仙台に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "東京",
-                  text: "地域を東京に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "名古屋",
-                  text: "地域を名古屋に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "大阪",
-                  text: "地域を大阪に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "福岡",
-                  text: "地域を福岡に設定して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "那覇",
-                  text: "地域を那覇に設定して",
-                },
-              },
-            ],
+            items: weatherReplyItems
           },
         });
         break;
@@ -118,134 +63,26 @@ const handleEvent = async (event) => {
           type: "text",
           text: message,
           quickReply: {
-            items: [
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "札幌の天気",
-                  text: "札幌の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "仙台の天気",
-                  text: "仙台の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "東京の天気",
-                  text: "東京の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "名古屋の天気",
-                  text: "名古屋の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "大阪の天気",
-                  text: "大阪の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "福岡の天気",
-                  text: "福岡の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "那覇の天気",
-                  text: "那覇の天気を教えて",
-                },
-              },
-            ],
+            items: weatherReplyItems
           },
         });
         break;
       case regex.test(text):
+        const regionName = reverseConvert(targetUser.region || 'Nagoya');
         message = await getWeather(targetUser.region || "Nagoya");
-        console.log(message);
-        await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: message,
-          quickReply: {
-            items: [
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "札幌の天気",
-                  text: "札幌の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "仙台の天気",
-                  text: "仙台の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "東京の天気",
-                  text: "東京の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "名古屋の天気",
-                  text: "名古屋の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "大阪の天気",
-                  text: "大阪の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "福岡の天気",
-                  text: "福岡の天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "那覇の天気",
-                  text: "那覇の天気を教えて",
-                },
-              },
-            ],
-          },
-        });
+        const weatherContents = await getWeatherFlex(targetUser.region || "Nagoya");
+        const messages = [
+          { type: "text", text: `${regionName}の天気をお伝えします。` },
+          {
+            type: "flex",
+            altText: message,
+            contents: weatherContents,
+            quickReply: {
+              items: weatherReplyItems
+            },
+          }
+        ]
+        await client.replyMessage(event.replyToken, messages);
         break;
       case settingAll.test(text):
         const contents = settingAllFlexMessages(targetUser);
