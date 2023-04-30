@@ -164,6 +164,65 @@ const regionReplyItems = [
   },
 ];
 
+const regionSettingReplyItems = [
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "札幌",
+      text: "地域を札幌に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "仙台",
+      text: "地域を仙台に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "東京",
+      text: "地域を東京に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "名古屋",
+      text: "地域を名古屋に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "大阪",
+      text: "地域を大阪に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "福岡",
+      text: "地域を福岡に設定して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "那覇",
+      text: "地域を那覇に設定して",
+    },
+  },
+];
+
 // 通知を削除するクイックリプライの作成
 const deleteNotifReplyItems = (targetUser) => {
   const messageCrons = targetUser.cronExpression.slice(0, 12);
@@ -193,5 +252,6 @@ module.exports = {
   notifReplyItems,
   baseReplyItems,
   regionReplyItems,
+  regionSettingReplyItems,
   deleteNotifReplyItems,
 };

@@ -1,5 +1,9 @@
 const { client } = require("./config.js");
-const { notifFlexMessages, regionFlexMessages, settingAllFlexMessages } = require("./flexmessage.js");
+const {
+  notifFlexMessages,
+  regionFlexMessages,
+  settingAllFlexMessages,
+} = require("./flexmessage.js");
 const {
   updateUser,
   convertCityName,
@@ -13,7 +17,14 @@ const {
 } = require("./setting.js");
 const { getWeather, getWeatherFlex } = require("./weather.js");
 const parser = require("cron-parser");
-const { weatherReplyItems, notifReplyItems, baseReplyItems, regionReplyItems, deleteNotifReplyItems } = require("./reply.js");
+const {
+  weatherReplyItems,
+  notifReplyItems,
+  baseReplyItems,
+  regionReplyItems,
+  regionSettingReplyItems,
+  deleteNotifReplyItems,
+} = require("./reply.js");
 console.log(weatherReplyItems);
 
 const regex =
@@ -52,7 +63,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
           quickReply: {
-            items: weatherReplyItems
+            items: regionSettingReplyItems,
           },
         });
         break;
@@ -68,17 +79,19 @@ const handleEvent = async (event) => {
             altText: message,
             contents: otherRegionContents,
             quickReply: {
-              items: weatherReplyItems
+              items: weatherReplyItems,
             },
-          }
+          },
         ];
 
         await client.replyMessage(event.replyToken, otherRegionMessages);
         break;
       case regex.test(text):
-        const regionName = reverseConvert(targetUser.region || 'Nagoya');
+        const regionName = reverseConvert(targetUser.region || "Nagoya");
         message = await getWeather(targetUser.region || "Nagoya");
-        const weatherContents = await getWeatherFlex(targetUser.region || "Nagoya");
+        const weatherContents = await getWeatherFlex(
+          targetUser.region || "Nagoya"
+        );
         const weatherMessages = [
           { type: "text", text: `${regionName}の天気をお伝えします。` },
           {
@@ -86,17 +99,17 @@ const handleEvent = async (event) => {
             altText: message,
             contents: weatherContents,
             quickReply: {
-              items: weatherReplyItems
+              items: weatherReplyItems,
             },
-          }
-        ]
+          },
+        ];
         await client.replyMessage(event.replyToken, weatherMessages);
         break;
       case settingAll.test(text):
         const contents = settingAllFlexMessages(targetUser);
 
         const items = deleteNotifReplyItems(targetUser);
-        
+
         await client.replyMessage(event.replyToken, {
           type: "flex",
           altText: "天気予報",
@@ -111,7 +124,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n平日の9時に通知して\n土日の22時に通知してなど。",
           quickReply: {
-            items: notifReplyItems
+            items: notifReplyItems,
           },
         });
         break;
@@ -120,7 +133,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
           quickReply: {
-            items: baseReplyItems
+            items: baseReplyItems,
           },
         });
         break;
@@ -134,7 +147,7 @@ const handleEvent = async (event) => {
             altText: "天気予報",
             contents: contents,
             quickReply: {
-              items: regionReplyItems
+              items: regionReplyItems,
             },
           });
         } else {
@@ -150,7 +163,7 @@ const handleEvent = async (event) => {
         try {
           expression = createCronExpression(text);
         } catch (error) {
-          console.log('クーロン式への変換に失敗しました');
+          console.log("クーロン式への変換に失敗しました");
         }
         // expressionが正しい可動かを判定する
         let expressionJudge = false;
@@ -226,7 +239,7 @@ const handleEvent = async (event) => {
             type: "text",
             text: message,
             quickReply: {
-              items: items
+              items: items,
             },
           });
         } else {
