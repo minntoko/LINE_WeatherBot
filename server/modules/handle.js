@@ -13,7 +13,7 @@ const {
 } = require("./setting.js");
 const { getWeather, getWeatherFlex } = require("./weather.js");
 const parser = require("cron-parser");
-const { weatherReplyItems, notifReplyItems } = require("./reply.js");
+const { weatherReplyItems, notifReplyItems, baseReplyItems, regionReplyItems } = require("./reply.js");
 console.log(weatherReplyItems);
 
 const regex =
@@ -138,40 +138,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
           quickReply: {
-            items: [
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "地域を設定",
-                  text: "地域の設定",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "通知の設定",
-                  text: "通知時間の設定",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "現在の天気",
-                  text: "天気を教えて",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "現在の設定",
-                  text: "現在の設定を表示",
-                },
-              },
-            ],
+            items: baseReplyItems
           },
         });
         break;
@@ -185,32 +152,7 @@ const handleEvent = async (event) => {
             altText: "天気予報",
             contents: contents,
             quickReply: {
-              items: [
-                {
-                  type: "action",
-                  action: {
-                    type: "message",
-                    label: "地域を再設定",
-                    text: "地域の設定",
-                  },
-                },
-                {
-                  type: "action",
-                  action: {
-                    type: "message",
-                    label: "通知の設定",
-                    text: "通知時間の設定",
-                  },
-                },
-                {
-                  type: "action",
-                  action: {
-                    type: "message",
-                    label: "現在の天気",
-                    text: "天気を教えて",
-                  },
-                },
-              ],
+              items: regionReplyItems
             },
           });
         } else {

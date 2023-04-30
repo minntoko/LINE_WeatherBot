@@ -100,7 +100,71 @@ const notifReplyItems = [
   },
 ];
 
+const baseReplyItems = [
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "地域を設定",
+      text: "地域の設定",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "通知の設定",
+      text: "通知時間の設定",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "現在の天気",
+      text: "天気を教えて",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "現在の設定",
+      text: "現在の設定を表示",
+    },
+  },
+];
+
+const regionReplyItems = [
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "地域を再設定",
+      text: "地域の設定",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "通知の設定",
+      text: "通知時間の設定",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "現在の天気",
+      text: "天気を教えて",
+    },
+  },
+];
+
 module.exports = {
   weatherReplyItems,
-  notifReplyItems
+  notifReplyItems,
+  baseReplyItems,
+  regionReplyItems,
 };
