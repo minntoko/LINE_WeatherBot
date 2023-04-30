@@ -56,7 +56,51 @@ const weatherReplyItems = [
     },
   },
 ];
- 
+
+const notifReplyItems = [
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "平日の9時",
+      text: "平日の9時に通知して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "平日の8時",
+      text: "平日の8時に通知して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "土日の10時",
+      text: "土日の10時に通知して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "土日の22時",
+      text: "土日の22時に通知して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "月曜日の8時30分",
+      text: "月曜日の8時30分に通知して",
+    },
+  },
+];
+
 module.exports = {
   weatherReplyItems,
+  notifReplyItems
 };

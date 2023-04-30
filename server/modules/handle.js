@@ -13,7 +13,7 @@ const {
 } = require("./setting.js");
 const { getWeather, getWeatherFlex } = require("./weather.js");
 const parser = require("cron-parser");
-const { weatherReplyItems } = require("./reply.js");
+const { weatherReplyItems, notifReplyItems } = require("./reply.js");
 console.log(weatherReplyItems);
 
 const regex =
@@ -129,48 +129,7 @@ const handleEvent = async (event) => {
           type: "text",
           text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n平日の9時に通知して\n土日の22時に通知してなど。",
           quickReply: {
-            items: [
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "平日の9時",
-                  text: "平日の9時に通知して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "平日の8時",
-                  text: "平日の8時に通知して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "土日の10時",
-                  text: "土日の10時に通知して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "土日の22時",
-                  text: "土日の22時に通知して",
-                },
-              },
-              {
-                type: "action",
-                action: {
-                  type: "message",
-                  label: "月曜日の8時30分",
-                  text: "月曜日の8時30分に通知して",
-                },
-              },
-            ],
+            items: notifReplyItems
           },
         });
         break;
