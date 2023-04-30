@@ -13,7 +13,7 @@ const {
 } = require("./setting.js");
 const { getWeather, getWeatherFlex } = require("./weather.js");
 const parser = require("cron-parser");
-const { weatherReplyItems, notifReplyItems, baseReplyItems, regionReplyItems } = require("./reply.js");
+const { weatherReplyItems, notifReplyItems, baseReplyItems, regionReplyItems, deleteNotifReplyItems } = require("./reply.js");
 console.log(weatherReplyItems);
 
 const regex =
@@ -31,7 +31,7 @@ const deleteNotification =
   /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
-  try {
+  // try {
     const text = event.message.text;
     const userId = event.source.userId;
     const targetUser = users.find((user) => user.userId === userId);
@@ -86,35 +86,9 @@ const handleEvent = async (event) => {
         break;
       case settingAll.test(text):
         const contents = settingAllFlexMessages(targetUser);
-        const messageCrons = targetUser.cronExpression.slice(0, 11);
-        const items = messageCrons.map((cron) => {
-          return {
-            type: "action",
-            action: {
-              type: "message",
-              label: `${convertCronToMessage(cron)}を削除`,
-              text: `${convertCronToMessage(cron)}の通知を削除して`,
-            },
-          };
-        });
-        items.unshift(
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "地域を設定",
-              text: "地域の設定",
-            },
-          },
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "通知の設定",
-              text: "通知時間の設定",
-            },
-          }
-        );
+
+        const items = deleteNotifReplyItems(targetUser);
+        
         await client.replyMessage(event.replyToken, {
           type: "flex",
           altText: "天気予報",
@@ -202,35 +176,7 @@ const handleEvent = async (event) => {
 
           const contents = notifFlexMessages(targetUser);
 
-          const messageCrons = targetUser.cronExpression.slice(0, 11);
-          const items = messageCrons.map((cron) => {
-            return {
-              type: "action",
-              action: {
-                type: "message",
-                label: `${convertCronToMessage(cron)}を削除`,
-                text: `${convertCronToMessage(cron)}の通知を削除して`,
-              },
-            };
-          });
-          items.unshift(
-            {
-              type: "action",
-              action: {
-                type: "message",
-                label: "使い方について",
-                text: "使い方を教えて",
-              },
-            },
-            {
-              type: "action",
-              action: {
-                type: "message",
-                label: "通知を追加",
-                text: "通知時間の設定",
-              },
-            }
-          );
+          const items = deleteNotifReplyItems(targetUser);
 
           await client.replyMessage(event.replyToken, {
             type: "flex",
@@ -266,31 +212,13 @@ const handleEvent = async (event) => {
               })
               .join("、") || "未設定";
           message += "です。";
+          const items = deleteNotifReplyItems(targetUser);
 
-          const messageCrons = targetUser.cronExpression.slice(0, 12);
-          const items = messageCrons.map((cron) => {
-            return {
-              type: "action",
-              action: {
-                type: "message",
-                label: `${convertCronToMessage(cron)}を削除`,
-                text: `${convertCronToMessage(cron)}の通知を削除して`,
-              },
-            };
-          });
-          items.unshift({
-            type: "action",
-            action: {
-              type: "message",
-              label: "通知の設定",
-              text: "通知時間の設定",
-            },
-          });
           await client.replyMessage(event.replyToken, {
             type: "text",
             text: message,
             quickReply: {
-              items: items,
+              items: items
             },
           });
         } else {
@@ -308,9 +236,9 @@ const handleEvent = async (event) => {
         break;
     }
     return null;
-  } catch {
-    console.error("エラーが発生しました");
-  }
+  // } catch {
+  //   console.error("エラーが発生しました");
+  // }
 };
 
 module.exports = {

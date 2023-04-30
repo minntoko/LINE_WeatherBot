@@ -1,3 +1,5 @@
+const { convertCronToMessage } = require("./setting");
+
 const weatherReplyItems = [
   {
     type: "action",
@@ -162,9 +164,34 @@ const regionReplyItems = [
   },
 ];
 
+// 通知を削除するクイックリプライの作成
+const deleteNotifReplyItems = (targetUser) => {
+  const messageCrons = targetUser.cronExpression.slice(0, 12);
+  const items = messageCrons.map((cron) => {
+    return {
+      type: "action",
+      action: {
+        type: "message",
+        label: `${convertCronToMessage(cron)}を削除`,
+        text: `${convertCronToMessage(cron)}の通知を削除して`,
+      },
+    };
+  });
+  items.unshift({
+    type: "action",
+    action: {
+      type: "message",
+      label: "通知の設定",
+      text: "通知時間の設定",
+    },
+  });
+  return items;
+};
+
 module.exports = {
   weatherReplyItems,
   notifReplyItems,
   baseReplyItems,
   regionReplyItems,
+  deleteNotifReplyItems,
 };
