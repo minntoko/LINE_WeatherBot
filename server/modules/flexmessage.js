@@ -9,7 +9,7 @@ const settingAllFlexMessages = (targetUser) => {
         type: "text",
         text: convertCronToMessage(expression),
         color: "#555555",
-        size: "md",
+        size: "sm",
         align: "center",
       },
     ],
@@ -68,7 +68,7 @@ const settingAllFlexMessages = (targetUser) => {
                 {
                   type: "text",
                   text: reverseConvert(targetUser.region) || "なし",
-                  size: "md",
+                  size: "sm",
                   color: "#555555",
                   align: "end",
                 },
@@ -97,7 +97,7 @@ const settingAllFlexMessages = (targetUser) => {
                       ? "なし"
                       : targetUser.cronExpression.length + "件",
                   align: "end",
-                  size: "md",
+                  size: "sm",
                   color: "#555555",
                 },
               ],
@@ -119,14 +119,23 @@ const settingAllFlexMessages = (targetUser) => {
 const notifFlexMessages = (targetUser) => {
   const flexMessages = targetUser.cronExpression.map((expression) => ({
     type: "box",
-    layout: "vertical",
+    layout: "horizontal",
     contents: [
+      {
+        type: "text",
+        text: "通知時間",
+        color: "#555555",
+        size: "md",
+        flex: 1,
+        weight: "bold",
+      },
       {
         type: "text",
         text: convertCronToMessage(expression),
         color: "#555555",
-        size: "md",
-        align: "center",
+        size: "sm",
+        flex: 2,
+        align: "end"
       },
     ],
     margin: "xxl",
@@ -178,7 +187,7 @@ const notifFlexMessages = (targetUser) => {
                     targetUser.cronExpression.length === 0
                       ? "なし"
                       : targetUser.cronExpression.length + "件",
-                  size: "md",
+                  size: "sm",
                   color: "#555555",
                   align: "end",
                 },
@@ -249,7 +258,7 @@ const regionFlexMessages = (region) => {
                 {
                   type: "text",
                   text: reverseConvert(region),
-                  size: "md",
+                  size: "sm",
                   color: "#555555",
                   align: "end",
                 },

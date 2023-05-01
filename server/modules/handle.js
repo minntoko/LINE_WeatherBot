@@ -61,7 +61,7 @@ const handleEvent = async (event) => {
       case regionRegister.test(text):
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: "天気情報をお届けするために、知りたい地域名を教えてください。\n\n入力例：\n地域を東京都に設定して、\n地域を名古屋にしてなど。",
+          text: "天気情報をお届けするために\n地域名を教えてください。",
           quickReply: {
             items: regionSettingReplyItems,
           },
@@ -106,23 +106,28 @@ const handleEvent = async (event) => {
         await client.replyMessage(event.replyToken, weatherMessages);
         break;
       case settingAll.test(text):
-        const contents = settingAllFlexMessages(targetUser);
 
+        const contents = settingAllFlexMessages(targetUser);
         const items = deleteNotifReplyItems(targetUser);
 
-        await client.replyMessage(event.replyToken, {
-          type: "flex",
-          altText: "天気予報",
-          contents: contents,
-          quickReply: {
-            items: items,
-          },
-        });
+        const settingMessages = [
+          { type: "text", text: "現在の設定をお伝えします。" },
+          {
+            type: "flex",
+            altText: "天気予報",
+            contents: contents,
+            quickReply: {
+              items: items,
+            },
+          }
+        ]
+
+        await client.replyMessage(event.replyToken, settingMessages);
         break;
       case notification.test(text):
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: "通知を設定するために、知りたい時間を教えてください。\n\n入力例：\n平日の9時に通知して\n土日の22時に通知してなど。",
+          text: "通知を設定するために\n登録する時間を教えてください。",
           quickReply: {
             items: notifReplyItems,
           },
@@ -131,7 +136,7 @@ const handleEvent = async (event) => {
       case usage.test(text):
         await client.replyMessage(event.replyToken, {
           type: "text",
-          text: "天気予報くんの使い方は\n\n天気を知りたい場所の地域名と通知して欲しい時間を設定すると、その時間にお天気状況をお知らせします。",
+          text: "天気予報くんの使い方\n\n天気を知りたい場所の地域名\n通知させたい時間を設定すると、\n\nお天気情報をお届けします。",
           quickReply: {
             items: baseReplyItems,
           },
@@ -191,7 +196,7 @@ const handleEvent = async (event) => {
             break;
           }
           updateCron({ expression: expression, userId: userId });
-          let message = "現在登録せれている通知は\n\n通知時間：\n";
+          let message = "現在登録せれている通知は\n通知時間：\n";
           message += targetUser.cronExpression
             .map((expression) => {
               return convertCronToMessage(expression);
@@ -233,7 +238,7 @@ const handleEvent = async (event) => {
             userId: userId,
             cronExpression: targetUser.cronExpression,
           });
-          let message = "現在登録せれている通知は\n\n通知時間：";
+          let message = "現在登録せれている通知は\n通知時間：";
           message +=
             targetUser.cronExpression
               .map((expression) => {
@@ -241,15 +246,23 @@ const handleEvent = async (event) => {
               })
               .join("、") || "未設定";
           message += "です。";
+
+          const contents = notifFlexMessages(targetUser);
           const items = deleteNotifReplyItems(targetUser);
 
-          await client.replyMessage(event.replyToken, {
-            type: "text",
-            text: message,
-            quickReply: {
-              items: items,
-            },
-          });
+          const deleteNotifMessages = [
+            { type: "text", text: "ご設定の通知は、次の通りです。" },
+            {
+              type: "flex",
+              altText: message,
+              contents: contents,
+              quickReply: {
+                items: items,
+              },
+            }
+          ]
+
+          await client.replyMessage(event.replyToken, deleteNotifMessages);
         } else {
           await client.replyMessage(event.replyToken, {
             type: "text",
