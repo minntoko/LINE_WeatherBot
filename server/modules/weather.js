@@ -52,8 +52,9 @@ const getWeatherFlex = async (city) => {
   const temp_min = response.main.temp_min.toFixed(1);
   const temp = response.main.temp.toFixed(1);
   const weather = convertWeather(response.weather[0].main);
+  const main = response.weather[0].main;
 
-  const regionContents = weatherFlexMessages({city: response.name, weather: weather, temp: temp});
+  const regionContents = weatherFlexMessages({city: response.name, weather: weather, temp: temp, main: main});
 
   return regionContents;
 };

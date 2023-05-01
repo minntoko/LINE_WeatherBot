@@ -155,17 +155,6 @@ const notifFlexMessages = (targetUser) => {
           size: "sm",
         },
         {
-          type: "text",
-          weight: "bold",
-          size: "xl",
-          margin: "md",
-          text: "通知の設定",
-        },
-        {
-          type: "separator",
-          margin: "xxl",
-        },
-        {
           type: "box",
           layout: "vertical",
           margin: "xxl",
@@ -178,7 +167,7 @@ const notifFlexMessages = (targetUser) => {
                 {
                   type: "text",
                   text: "設定した通知",
-                  size: "md",
+                  size: "xl",
                   color: "#555555",
                   flex: 0,
                   weight: "bold",
@@ -194,6 +183,7 @@ const notifFlexMessages = (targetUser) => {
                   align: "end",
                 },
               ],
+              alignItems: "center",
             },
             {
               type: "box",
@@ -278,7 +268,50 @@ const regionFlexMessages = (region) => {
   return regionContents;
 };
 
-const weatherFlexMessages = ({ city, weather, temp }) => {
+const defaultColor = {
+  type: "linearGradient",
+  angle: "135deg",
+  startColor: "#418DFD",
+  endColor: "#2ED4FF",
+};
+
+const cloudsColor = {
+  type: "linearGradient",
+  angle: "135deg",
+  startColor: "#949faf",
+  endColor: "#888888",
+};
+
+const rainColor = {
+  type: "linearGradient",
+  angle: "135deg",
+  startColor: "#949faf",
+  endColor: "#5bc8f5",
+};
+
+const snowColor = {
+  type: "linearGradient",
+  angle: "135deg",
+  endColor: "#949faf",
+  startColor: "#a8caf0",
+};
+
+const weatherFlexMessages = ({ city, weather, temp, main }) => {
+  let background = {};
+  switch(main) {
+    case "Clouds":
+      background = cloudsColor;
+      break;
+    case "Rain":
+      background = rainColor;
+      break;
+    case "Snow":
+      background = snowColor;
+      break;
+    default:
+      background = defaultColor;
+      break;
+  }
   const weatherContents = {
     type: "bubble",
     body: {
@@ -307,7 +340,7 @@ const weatherFlexMessages = ({ city, weather, temp }) => {
                   text: `地域 ${city}`,
                   color: "#ffffffcc",
                   size: "sm",
-                  margin: "md"
+                  margin: "md",
                 },
               ],
               spacing: "sm",
@@ -340,12 +373,7 @@ const weatherFlexMessages = ({ city, weather, temp }) => {
         },
       ],
       paddingAll: "20px",
-      background: {
-        type: "linearGradient",
-        angle: "135deg",
-        startColor: "#418DFD",
-        endColor: "#2ED4FF",
-      },
+      background: background,
     },
   };
   return weatherContents;

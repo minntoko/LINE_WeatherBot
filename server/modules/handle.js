@@ -266,11 +266,7 @@ const handleEvent = async (event) => {
     }
     return null;
   } catch {
-    await client.replyMessage(event.replyToken, {
-      type: "text",
-      text: `すいません、よく分かりませんでした。`,
-    });
-    console.error("エラーが発生しました");
+    console.log("エラーが発生しました");
   }
 };
 
