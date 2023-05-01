@@ -142,14 +142,18 @@ const handleEvent = async (event) => {
         if (region) {
           await updateUser({ userId: userId, region: region });
           const contents = regionFlexMessages(region);
-          await client.replyMessage(event.replyToken, {
-            type: "flex",
-            altText: "天気予報",
-            contents: contents,
-            quickReply: {
-              items: regionReplyItems,
-            },
-          });
+          const regionMessages = [
+            { type: "text", text: "ご設定の地域は、次の通りです。" },
+            {
+              type: "flex",
+              altText: `地域を${reverseConvert(region)}に設定しました。`,
+              contents: contents,
+              quickReply: {
+                items: regionReplyItems,
+              },
+            }
+          ]
+          await client.replyMessage(event.replyToken, regionMessages);
         } else {
           await client.replyMessage(event.replyToken, {
             type: "text",
@@ -187,26 +191,30 @@ const handleEvent = async (event) => {
             break;
           }
           updateCron({ expression: expression, userId: userId });
-          // let message = "現在登録せれている通知は\n\n通知時間：\n";
-          // message += targetUser.cronExpression
-          //   .map((expression) => {
-          //     return convertCronToMessage(expression);
-          //   })
-          //   .join("、\n");
-          // message += "です。";
+          let message = "現在登録せれている通知は\n\n通知時間：\n";
+          message += targetUser.cronExpression
+            .map((expression) => {
+              return convertCronToMessage(expression);
+            })
+            .join("、\n");
+          message += "です。";
 
           const contents = notifFlexMessages(targetUser);
-
           const items = deleteNotifReplyItems(targetUser);
 
-          await client.replyMessage(event.replyToken, {
-            type: "flex",
-            altText: "天気予報",
-            contents: contents,
-            quickReply: {
-              items: items,
+          const notifMessages = [
+            { type: "text", text: "ご設定の通知は、次の通りです。" },
+            {
+              type: "flex",
+              altText: message,
+              contents: contents,
+              quickReply: {
+                items: items,
+              },
             },
-          });
+          ];
+
+          await client.replyMessage(event.replyToken, notifMessages);
         } else {
           await client.replyMessage(event.replyToken, {
             type: "text",
