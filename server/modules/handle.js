@@ -3,6 +3,7 @@ const {
   notifFlexMessages,
   regionFlexMessages,
   settingAllFlexMessages,
+  usageFlexMessages,
 } = require("./flexmessage.js");
 const {
   updateUser,
@@ -25,7 +26,6 @@ const {
   regionSettingReplyItems,
   deleteNotifReplyItems,
 } = require("./reply.js");
-console.log(weatherReplyItems);
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -134,13 +134,14 @@ const handleEvent = async (event) => {
         });
         break;
       case usage.test(text):
-        await client.replyMessage(event.replyToken, {
-          type: "text",
-          text: "天気予報くんの使い方\n\n天気を知りたい場所の地域名\n通知させたい時間を設定すると、\n\nお天気情報をお届けします。",
-          quickReply: {
-            items: baseReplyItems,
-          },
-        });
+        const usageMessages = [
+          { type: "text", text: "天気予報くんの使い方について" },
+          {
+            type: "flex",
+            altText: "天気予報くんの使い方をお伝えします。",
+            contents: usageFlexMessages
+          }];
+        await client.replyMessage(event.replyToken, usageMessages);
         break;
       case regionRegex.test(text):
         const region = convertCityName(text.match(regionRegex)[1]);
