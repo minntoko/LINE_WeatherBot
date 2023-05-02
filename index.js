@@ -10,6 +10,8 @@ const port = process.env.PORT;
 
 periodic();
 
+app.use(express.static('server'));
+
 app.post("/webhook", line.middleware(config), (req, res) => {
   const events = req.body.events;
   console.log(events);
