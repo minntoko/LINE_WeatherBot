@@ -1,4 +1,6 @@
 const { convertCronToMessage, reverseConvert } = require("./setting");
+const dotenv = require("dotenv").config();
+const imageUrl = process.env.URL;
 
 const settingAllFlexMessages = (targetUser) => {
   const flexMessages = targetUser.cronExpression.map((expression) => ({
@@ -135,7 +137,7 @@ const notifFlexMessages = (targetUser) => {
         color: "#555555",
         size: "sm",
         flex: 2,
-        align: "end"
+        align: "end",
       },
     ],
     margin: "xxl",
@@ -307,7 +309,7 @@ const snowColor = {
 
 const weatherFlexMessages = ({ city, weather, temp, main }) => {
   let background = {};
-  switch(main) {
+  switch (main) {
     case "Clouds":
       background = cloudsColor;
       break;
@@ -388,9 +390,151 @@ const weatherFlexMessages = ({ city, weather, temp, main }) => {
   return weatherContents;
 };
 
+const usageFlexMessages = {
+  type: "carousel",
+  contents: [
+    {
+      type: "bubble",
+      hero: {
+        type: "image",
+        size: "full",
+        aspectRatio: "20:13",
+        aspectMode: "cover",
+        url: `${imageUrl}/images/01_weather.png`,
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "text",
+            text: "現在の天気情報をお届け",
+            wrap: true,
+            weight: "bold",
+            size: "md",
+          },
+          {
+            type: "text",
+            text: "メニューから天気をタップすると\n登録地域の天気をお届けします。",
+            wrap: true,
+          },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "separator",
+          },
+          {
+            type: "button",
+            action: {
+              type: "message",
+              label: "現在の天気の状況を見る",
+              text: "天気を教えて",
+            },
+          },
+        ],
+      },
+    },
+    {
+      type: "bubble",
+      hero: {
+        type: "image",
+        size: "full",
+        aspectRatio: "20:13",
+        aspectMode: "cover",
+        url: `${imageUrl}/images/02_region.png`,
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "text",
+            text: "地域を登録しよう",
+            wrap: true,
+            weight: "bold",
+            size: "md",
+          },
+          {
+            type: "text",
+            text: "メニューから地域をタップして\n自分が住んでる地域を登録してね",
+            wrap: true,
+          },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "separator",
+          },
+          {
+            type: "button",
+            action: {
+              type: "message",
+              label: "ここからでも地域を登録できるよ",
+              text: "地域の設定",
+            },
+          },
+        ],
+      },
+    },
+    {
+      type: "bubble",
+      hero: {
+        type: "image",
+        size: "full",
+        aspectRatio: "20:13",
+        aspectMode: "cover",
+        url: `${imageUrl}/images/03_notif.png`,
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "text",
+            text: "通知を設定しよう",
+            wrap: true,
+            weight: "bold",
+            size: "md",
+          },
+          {
+            type: "text",
+            text: "通知して欲しい時間を設定すると\nその時間に天気情報をお届けするよ",
+            wrap: true,
+          },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "separator",
+          },
+          {
+            type: "button",
+            action: {
+              type: "message",
+              label: "通知する時間を登録してね",
+              text: "通知時間の設定",
+            },
+          },
+        ],
+      },
+    },
+  ],
+};
+
 module.exports = {
   settingAllFlexMessages: settingAllFlexMessages,
   notifFlexMessages: notifFlexMessages,
   regionFlexMessages: regionFlexMessages,
   weatherFlexMessages: weatherFlexMessages,
+  usageFlexMessages: usageFlexMessages,
 };
