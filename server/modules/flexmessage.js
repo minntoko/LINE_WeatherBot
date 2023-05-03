@@ -398,7 +398,7 @@ const usageFlexMessages = {
       hero: {
         type: "image",
         size: "full",
-        aspectRatio: "20:13",
+        aspectRatio: "17:10",
         aspectMode: "cover",
         url: `${imageUrl}/images/01_weather.png`,
       },
@@ -443,7 +443,7 @@ const usageFlexMessages = {
       hero: {
         type: "image",
         size: "full",
-        aspectRatio: "20:13",
+        aspectRatio: "17:10",
         aspectMode: "cover",
         url: `${imageUrl}/images/02_region.png`,
       },
@@ -488,7 +488,7 @@ const usageFlexMessages = {
       hero: {
         type: "image",
         size: "full",
-        aspectRatio: "20:13",
+        aspectRatio: "17:10",
         aspectMode: "cover",
         url: `${imageUrl}/images/03_notif.png`,
       },
