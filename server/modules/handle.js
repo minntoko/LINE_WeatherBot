@@ -112,7 +112,7 @@ const handleEvent = async (event) => {
           { type: "text", text: "現在の設定をお伝えします。" },
           {
             type: "flex",
-            altText: "天気予報",
+            altText: "現在の設定について",
             contents: contents,
             quickReply: {
               items: items,
