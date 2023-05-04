@@ -64,16 +64,16 @@ const notifReplyItems = [
     type: "action",
     action: {
       type: "message",
-      label: "平日の9時",
-      text: "平日の9時に通知して",
+      label: "平日の8時",
+      text: "平日の8時に通知して",
     },
   },
   {
     type: "action",
     action: {
       type: "message",
-      label: "平日の8時",
-      text: "平日の8時に通知して",
+      label: "平日の9時",
+      text: "平日の9時に通知して",
     },
   },
   {
@@ -98,6 +98,14 @@ const notifReplyItems = [
       type: "message",
       label: "月曜日の8時30分",
       text: "月曜日の8時30分に通知して",
+    },
+  },
+  {
+    type: "action",
+    action: {
+      type: "message",
+      label: "火曜日の8時30分",
+      text: "火曜日の8時30分に通知して",
     },
   },
 ];

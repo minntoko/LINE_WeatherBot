@@ -74,7 +74,6 @@ const addUser = (userId) => {
 // 例：「平日の9時に通知して」→「0 0 9 * * Mon-Fri」
 // 例：「土日の10時に通知して」→「0 0 10 * * Sat-Sun」
 // 例：「毎週水曜日の23時59分に通知して」→「0 59 23 * * Wed」
-// 課題　→　ありえない時間を指定した場合の処理
 function createCronExpression(message) {
   const parts = message
     .replace(/曜日/g, "")
@@ -87,8 +86,6 @@ function createCronExpression(message) {
 
   let minute = parts[1].split(/(?:時|:|：)/)[1] || 0;
   let hour = parts[1].split(/(?:時|:|：)/)[0];
-
-  console.log(parts);
 
   if (parts[0] === "平日") {
     return `0 ${minute} ${hour} * * 1,2,3,4,5`;
@@ -112,7 +109,6 @@ const updateCron = ({ expression, userId }) => {
 // すでに登録されているクーロン式かどうかを判定する処理
 const isExistingCron = ({ expression, userId }) => {
   const user = users.find((user) => user.userId === userId);
-  // return user.cronExpression.includes(expression); // true or false
 
   const parts = expression.split(" ");
   // ユーザーのcron式を繰り返し、チェック対象の式と部分的に一致する部分があるかどうかをチェックする。
@@ -141,9 +137,7 @@ const isExistingCron = ({ expression, userId }) => {
         // 一部重複している
         console.log("重複してる通知があります。");
         result = true;
-        // else ifでpartsのlengthも1だったらresult = falseにする
       } else if (!cronParts[5].split(",").length === 1) {
-        // 上書き 月曜日の9時に通知して→火曜日の9時に通知してが上書きされてしまう
         console.log("通知を上書きします。");
         user.cronExpression = user.cronExpression.filter(
           (existingCron) => existingCron !== cron
@@ -178,7 +172,6 @@ const deleteCron = ({ expression, userId }) => {
 const convertCronToMessage = (cronExpression) => {
   try {
     const parts = cronExpression.split(" ");
-    console.log(parts);
     const minute = parts[1];
     const hour = parts[2];
     const dayOfMonth = parts[3];
@@ -196,7 +189,6 @@ const convertCronToMessage = (cronExpression) => {
         .map((value) => weekdays[value] + "曜日")
         .join("と");
     }
-    // 時間によってメッセージを構築する
     message += `の${hour}時`;
     message += minute === "0" ? "" : minute + "分";
     return message;

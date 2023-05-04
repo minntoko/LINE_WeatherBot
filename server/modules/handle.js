@@ -29,7 +29,7 @@ const {
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
-const wheserRegex = /(.+)の(?=.*(?:天気|てんき))(?=.*(?:教えて|おしえて))/; // 他の地域の天気を教えて
+const wheserRegex = /(.+)の(?=.*(?:天気|てんき))(?=.*(?:教えて|おしえて))/;
 const regionRegister = /(?=.*(?:地域の|ちいきの))(?=.*(?:設定|せってい))/;
 const regionRegex = /地域を(.+)(?:に変更して|にして|に設定して)/;
 const settingAll =
@@ -46,12 +46,10 @@ const handleEvent = async (event) => {
     const text = event.message.text;
     const userId = event.source.userId;
     const targetUser = users.find((user) => user.userId === userId);
-    // 新しいユーザの場合は追加する
     if (!targetUser) {
       addUser(event.source.userId);
     }
 
-    // メッセージじゃなかったら返信しない
     if (event.type !== "message" || event.message.type !== "text") {
       return null;
     }
@@ -70,7 +68,7 @@ const handleEvent = async (event) => {
       case wheserRegex.test(text):
         const otherRegion = convertCityName(text.match(wheserRegex)[1]);
         const otherRegionName = reverseConvert(otherRegion);
-        message = await getWeather(otherRegion); // 他の地域の天気
+        message = await getWeather(otherRegion);
         const otherRegionContents = await getWeatherFlex(otherRegion);
         const otherRegionMessages = [
           { type: "text", text: `${otherRegionName}の天気をお伝えします。` },
@@ -168,14 +166,12 @@ const handleEvent = async (event) => {
         }
         break;
       case notificationRegex.test(text):
-        // createCronExpressionをここで行う
         let expression = false;
         try {
           expression = createCronExpression(text);
         } catch (error) {
           console.log("クーロン式への変換に失敗しました");
         }
-        // expressionが正しい可動かを判定する
         let expressionJudge = false;
         try {
           parser.parseExpression(expression);
@@ -184,7 +180,6 @@ const handleEvent = async (event) => {
           console.log("expressionが正しくありません");
         }
         if (expressionJudge) {
-          // 既に登録されているかを判定する
           const isExisting = isExistingCron({
             userId: targetUser.userId,
             expression: expression,
@@ -234,7 +229,7 @@ const handleEvent = async (event) => {
           (expression) => expression === deleteExpression
         );
         if (deleteIndex !== -1) {
-          targetUser.cronExpression.splice(deleteIndex, 1); // インデックス番号deleteIndexから1つ要素を削除
+          targetUser.cronExpression.splice(deleteIndex, 1);
           await updateUser({
             userId: userId,
             cronExpression: targetUser.cronExpression,

@@ -10,7 +10,6 @@ const options = (city) => {
 };
 
 const convertWeather = (weather) => {
-  // TODO 調べる
   const weatherDict = {
     Clouds: "曇り☁️",
     Clear: "晴れ☀️",
