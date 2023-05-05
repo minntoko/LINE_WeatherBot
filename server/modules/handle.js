@@ -43,7 +43,7 @@ const deleteNotification =
   /(?=.*(?:の通知を|のつうちを))(?=.*(?:削除して|消して|けして))/;
 
 const handleEvent = async (event) => {
-  // try {
+  try {
     const text = event.message.text;
     const userId = event.source.userId;
     const targetUser = users.find((user) => user.userId === userId);
@@ -277,9 +277,9 @@ const handleEvent = async (event) => {
     periodic();
     console.log(users);
     return null;
-  // } catch {
-  //   console.log("エラーが発生しました");
-  // }
+  } catch {
+    console.log("エラーが発生しました");
+  }
 };
 
 module.exports = {

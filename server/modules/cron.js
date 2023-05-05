@@ -3,11 +3,15 @@ const { users, reverseConvert } = require("./setting.js");
 const { getWeather, getWeatherFlex } = require("./weather.js");
 const { client } = require("./config.js");
 
+let jobs = [];
 const periodic = () => {
   users.forEach((user) => {
     if (user.enabled) {
+      jobs.forEach((job) => {
+        job.stop();
+      });
+      jobs = [];
       const cronExpressions = user.cronExpression;
-      const jobs = [];
       cronExpressions.forEach((cronExpression) => {
         const job = new cron.CronJob(
           cronExpression,
@@ -19,7 +23,7 @@ const periodic = () => {
                 user.userId,
                 message,
                 flexMessage,
-                user.region
+                user.region || "Nagoya"
               );
               console.log(
                 `ユーザーID ${user.userId} にメッセージを送信しました。`
@@ -44,12 +48,12 @@ const periodic = () => {
     userId,
     message,
     flexMessage,
-    region = "Nagoya"
+    region
   ) {
     await client.pushMessage(userId, [
       {
         type: "text",
-        text: `${reverseConvert(region || "Nagoya")}の天気をお伝えします。`,
+        text: `${reverseConvert(region)}の天気をお伝えします。`,
       },
       {
         type: "flex",
