@@ -3,12 +3,9 @@ const dotenv = require("dotenv").config();
 
 const { line, config } = require("./server/modules/config.js");
 const { handleEvent } = require("./server/modules/handle.js");
-const { periodic } = require("./server/modules/cron.js");
 
 const app = express();
 const port = process.env.PORT;
-
-periodic();
 
 app.use(express.static('server'));
 

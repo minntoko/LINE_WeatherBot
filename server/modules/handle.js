@@ -26,6 +26,7 @@ const {
   regionSettingReplyItems,
   deleteNotifReplyItems,
 } = require("./reply.js");
+const { periodic } = require("./cron.js");
 
 const regex =
   /(?=.*(?:天気|てんき|気温|きおん|予報|よほう))(?=.*(?:教えて|おしえて|出力|しゅつりょく))/;
@@ -273,6 +274,8 @@ const handleEvent = async (event) => {
         });
         break;
     }
+    periodic();
+    console.log(users);
     return null;
   } catch {
     console.log("エラーが発生しました");

@@ -1,17 +1,4 @@
-const users = [
-  {
-    userId: "Ued7682d4b7fffa3b91cbf24ed734cde9",
-    cronExpression: [],
-    region: "Tokyo",
-    enabled: true,
-  },
-  {
-    userId: process.env.USER_ID1,
-    cronExpression: [],
-    region: "",
-    enabled: true,
-  },
-];
+const users = [];
 
 // 地域変換テーブル
 const cityNames = {
@@ -104,6 +91,7 @@ const updateCron = ({ expression, userId }) => {
       user.cronExpression.push(expression);
     }
   });
+  console.log("ユーザー情報を更新しました。");
 };
 
 // すでに登録されているクーロン式かどうかを判定する処理
@@ -133,7 +121,8 @@ const isExistingCron = ({ expression, userId }) => {
     }
     if (flag) {
       // 平日→金曜日=登録済み, 金曜日→平日=上書き
-      if (cronParts[5].split(",").includes(parts[5])) { // 5 > 1,2,3,4,5 -> false
+      if (cronParts[5].split(",").includes(parts[5])) {
+        // 5 > 1,2,3,4,5 -> false
         // 一部重複している
         console.log("重複してる通知があります。");
         result = true;
